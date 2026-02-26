@@ -11,744 +11,478 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Zen Todo</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
 <style>
-  :root {
-    --sage: #7B9E87;
-    --sage-light: rgba(123,158,135,0.12);
-    --sage-faint: rgba(123,158,135,0.06);
-    --earth: #C4956A;
-    --earth-light: rgba(196,149,106,0.1);
-    --sky: #8B9FC5;
-    --lavender: #B8A0C8;
-    --text: #3D4A42;
-    --text-soft: #6B7B6E;
-    --text-muted: #8B9E93;
-    --text-faint: #B0B8A8;
-    --bg1: #F5F0EB;
-    --bg2: #EDE8E0;
-    --glass: rgba(255,255,255,0.55);
-    --glass-border: rgba(255,255,255,0.6);
-    --serif: 'Cormorant Garamond', Georgia, serif;
-    --sans: 'DM Sans', -apple-system, sans-serif;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
+:root {
+  --sage: #7B9E87; --sage-light: rgba(123,158,135,0.12); --sage-faint: rgba(123,158,135,0.06);
+  --earth: #C4956A; --earth-light: rgba(196,149,106,0.1);
+  --sky: #8B9FC5; --lavender: #B8A0C8;
+  --text: #3D4A42; --text-soft: #6B7B6E; --text-muted: #8B9E93; --text-faint: #B0B8A8;
+  --bg1: #F5F0EB; --bg2: #EDE8E0;
+  --glass: rgba(255,255,255,0.55); --glass-border: rgba(255,255,255,0.6);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: hidden; font-family: var(--sans); color: var(--text);
+  background: linear-gradient(165deg, var(--bg1) 0%, var(--bg2) 50%, #E8E5DD 100%); }
+body { padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
-  html, body { 
-    height: 100%; overflow-x: hidden;
-    font-family: var(--sans); color: var(--text);
-    background: linear-gradient(165deg, var(--bg1) 0%, var(--bg2) 50%, #E8E5DD 100%);
-  }
+@keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.8); opacity: 0.15; } }
+@keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 0; } 10% { opacity: 0.25; } 90% { opacity: 0.05; } 100% { transform: translateY(-90vh) scale(0); opacity: 0; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes checkDraw { from { stroke-dashoffset: 14; } to { stroke-dashoffset: 0; } }
+@keyframes gentlePulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+@keyframes celebrateBurst { 0% { transform: scale(0) rotate(0deg); opacity: 1; } 50% { opacity: 1; } 100% { transform: scale(1.5) rotate(180deg); opacity: 0; } }
+@keyframes swipeOut { to { transform: translateX(120%); opacity: 0; } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-20px); } }
 
-  body { padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+.app { min-height: 100vh; position: relative; overflow: hidden; max-width: 100%; padding-bottom: 100px; }
+.container { max-width: 480px; margin: 0 auto; padding: 40px 20px 40px; position: relative; z-index: 1; }
 
-  /* ===== ANIMATIONS ===== */
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); opacity: 0.4; }
-    50% { transform: scale(1.8); opacity: 0.15; }
-  }
-  @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 0; }
-    10% { opacity: 0.25; }
-    90% { opacity: 0.05; }
-    100% { transform: translateY(-90vh) scale(0); opacity: 0; }
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes checkDraw {
-    from { stroke-dashoffset: 14; }
-    to { stroke-dashoffset: 0; }
-  }
-  @keyframes gentlePulse {
-    0%, 100% { opacity: 0.65; }
-    50% { opacity: 1; }
-  }
-  @keyframes celebrateBurst {
-    0% { transform: scale(0) rotate(0deg); opacity: 1; }
-    50% { opacity: 1; }
-    100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
-  }
-  @keyframes slideDown {
-    from { opacity: 0; max-height: 0; transform: translateY(-8px); }
-    to { opacity: 1; max-height: 200px; transform: translateY(0); }
-  }
-  @keyframes swipeOut {
-    to { transform: translateX(120%); opacity: 0; }
-  }
+.particle { position: absolute; bottom: -10px; width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(123,158,135,0.2); pointer-events: none; animation: floatUp 10s ease-in infinite; }
+.blob { position: absolute; border-radius: 50%; pointer-events: none; }
+.blob-1 { top: -15%; right: -15%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(123,158,135,0.08) 0%, transparent 70%); }
+.blob-2 { bottom: -10%; left: -15%; width: 40vw; height: 40vw;
+  background: radial-gradient(circle, rgba(196,149,106,0.06) 0%, transparent 70%); }
 
-  /* ===== LAYOUT ===== */
-  .app {
-    min-height: 100vh; position: relative; overflow: hidden;
-    max-width: 100%; padding-bottom: 100px;
-  }
-  .container {
-    max-width: 480px; margin: 0 auto;
-    padding: 40px 20px 40px;
-    position: relative; z-index: 1;
-  }
+/* NAV TABS */
+.nav-bar { display: flex; gap: 4px; margin-bottom: 28px; animation: fadeInUp 0.6s ease-out;
+  background: rgba(0,0,0,0.03); border-radius: 12px; padding: 4px; }
+.nav-btn { flex: 1; padding: 10px 0; border-radius: 10px; border: none; background: transparent;
+  color: var(--text-muted); font-size: 12px; letter-spacing: 0.5px; font-family: var(--sans);
+  cursor: pointer; transition: all 0.3s ease; font-weight: 400; -webkit-appearance: none; }
+.nav-btn.active { background: rgba(255,255,255,0.8); color: var(--text); font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 
-  /* ===== AMBIENT ===== */
-  .particle {
-    position: absolute; bottom: -10px;
-    width: 4px; height: 4px; border-radius: 50%;
-    background: rgba(123,158,135,0.2);
-    pointer-events: none;
-    animation: floatUp 10s ease-in infinite;
-  }
-  .blob {
-    position: absolute; border-radius: 50%; pointer-events: none;
-  }
-  .blob-1 {
-    top: -15%; right: -15%; width: 50vw; height: 50vw;
-    background: radial-gradient(circle, rgba(123,158,135,0.08) 0%, transparent 70%);
-  }
-  .blob-2 {
-    bottom: -10%; left: -15%; width: 40vw; height: 40vw;
-    background: radial-gradient(circle, rgba(196,149,106,0.06) 0%, transparent 70%);
-  }
+/* HEADER */
+.header { margin-bottom: 28px; animation: fadeInUp 0.8s ease-out; }
+.date-label { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 6px; font-weight: 400; }
+.greeting { font-family: var(--serif); font-size: 30px; font-weight: 300; color: var(--text); line-height: 1.2; }
+.affirmation { font-family: var(--serif); font-size: 14px; font-style: italic;
+  color: var(--text-muted); animation: gentlePulse 6s ease-in-out infinite; line-height: 1.5; margin-top: 14px; }
 
-  /* ===== HEADER ===== */
-  .header { margin-bottom: 32px; animation: fadeInUp 0.8s ease-out; }
-  .date-label {
-    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
-    color: var(--text-muted); margin-bottom: 6px; font-weight: 400;
-  }
-  .greeting {
-    font-family: var(--serif); font-size: 30px; font-weight: 300;
-    color: var(--text); line-height: 1.2;
-  }
-  .affirmation {
-    font-family: var(--serif); font-size: 14px; font-style: italic;
-    color: var(--text-muted); animation: gentlePulse 6s ease-in-out infinite;
-    line-height: 1.5; margin-top: 14px;
-  }
+.streak-badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 20px;
+  background: var(--earth-light); font-size: 11px; letter-spacing: 0.8px; color: #8B7B6B; transition: all 0.5s ease; }
+.streak-badge.empty { background: rgba(0,0,0,0.03); }
+.streak-icon { font-size: 14px; transition: filter 0.5s ease; }
+.streak-badge.empty .streak-icon { filter: grayscale(1); }
 
-  /* ===== STREAK ===== */
-  .streak-badge {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 6px 14px; border-radius: 20px;
-    background: var(--earth-light);
-    font-size: 11px; letter-spacing: 0.8px; color: #8B7B6B;
-    transition: all 0.5s ease; margin-top: 8px;
-  }
-  .streak-badge.empty { background: rgba(0,0,0,0.03); }
-  .streak-icon { font-size: 14px; transition: filter 0.5s ease; }
-  .streak-badge.empty .streak-icon { filter: grayscale(1); }
+/* PROGRESS */
+.progress-card { display: flex; align-items: center; gap: 24px; padding: 24px; border-radius: 20px;
+  background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); margin-bottom: 24px; animation: fadeInUp 0.8s 0.15s ease-out both; }
+.progress-ring { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring .count { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.progress-ring .num { font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--text); }
+.progress-ring .label { font-size: 9px; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase; }
+.progress-info { flex: 1; }
+.progress-status { font-size: 13px; color: var(--text-soft); margin-bottom: 8px; }
+.cat-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+.cat-pill { display: flex; align-items: center; gap: 4px; font-size: 11px; opacity: 0.7; }
+.cat-pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+.breathing-orb { width: 6px; height: 6px; border-radius: 50%; background: rgba(123,158,135,0.4);
+  animation: breathe 4s ease-in-out infinite; flex-shrink: 0; }
 
-  /* ===== PROGRESS CARD ===== */
-  .progress-card {
-    display: flex; align-items: center; gap: 24px;
-    padding: 24px; border-radius: 20px;
-    background: var(--glass); backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    margin-bottom: 24px;
-    animation: fadeInUp 0.8s 0.15s ease-out both;
-  }
-  .progress-ring { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
-  .progress-ring svg { transform: rotate(-90deg); }
-  .progress-ring .count {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
-  .progress-ring .num {
-    font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--text);
-  }
-  .progress-ring .label {
-    font-size: 9px; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase;
-  }
-  .progress-info { flex: 1; }
-  .progress-status { font-size: 13px; color: var(--text-soft); margin-bottom: 8px; }
-  .cat-pills { display: flex; gap: 10px; flex-wrap: wrap; }
-  .cat-pill {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 11px; opacity: 0.7;
-  }
-  .cat-pill-dot { width: 6px; height: 6px; border-radius: 50%; }
-  .breathing-orb {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(123,158,135,0.4);
-    animation: breathe 4s ease-in-out infinite;
-    flex-shrink: 0;
-  }
+/* INPUT */
+.input-card { padding: 18px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); margin-bottom: 20px;
+  animation: fadeInUp 0.8s 0.3s ease-out both; }
+.cat-selector { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.cat-btn { padding: 5px 12px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06); background: transparent;
+  color: #999; font-size: 11px; letter-spacing: 0.4px; font-family: var(--sans); cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); -webkit-appearance: none; }
+.cat-btn:active { transform: scale(0.95); }
+.cat-btn.active { border-color: var(--cat-color); background: color-mix(in srgb, var(--cat-color) 8%, transparent); color: var(--cat-color); }
+.cat-btn-icon { margin-right: 4px; font-size: 9px; }
+.input-row { display: flex; gap: 10px; }
+.input-field { flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.6); font-size: 14px; font-family: var(--sans); color: var(--text);
+  transition: border-color 0.3s ease; -webkit-appearance: none; }
+.input-field::placeholder { color: var(--text-faint); font-style: italic; }
+.input-field:focus { outline: none; border-color: rgba(123,158,135,0.3); }
+.add-btn { padding: 12px 20px; border-radius: 12px; border: none; background: var(--sage); color: white;
+  font-size: 13px; font-family: var(--sans); font-weight: 500; letter-spacing: 0.5px; cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); -webkit-appearance: none; }
+.add-btn:active { transform: scale(0.95); background: #6B8E77; }
 
-  /* ===== INPUT AREA ===== */
-  .input-card {
-    padding: 18px; border-radius: 20px;
-    background: var(--glass); backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    margin-bottom: 20px;
-    animation: fadeInUp 0.8s 0.3s ease-out both;
-  }
-  .cat-selector { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-  .cat-btn {
-    padding: 5px 12px; border-radius: 18px;
-    border: 1px solid rgba(0,0,0,0.06);
-    background: transparent; color: #999;
-    font-size: 11px; letter-spacing: 0.4px;
-    font-family: var(--sans); cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    -webkit-appearance: none;
-  }
-  .cat-btn:active { transform: scale(0.95); }
-  .cat-btn.active {
-    border-color: var(--cat-color);
-    background: color-mix(in srgb, var(--cat-color) 8%, transparent);
-    color: var(--cat-color);
-  }
-  .cat-btn-icon { margin-right: 4px; font-size: 9px; }
+/* FILTERS */
+.filters { display: flex; gap: 4px; margin-bottom: 14px; animation: fadeInUp 0.8s 0.45s ease-out both; }
+.filter-btn { padding: 6px 12px; border-radius: 8px; border: none; background: transparent; color: #AAA;
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-family: var(--sans); cursor: pointer;
+  transition: all 0.3s ease; -webkit-appearance: none; }
+.filter-btn.active { background: var(--sage-light); color: #4A5D52; }
 
-  .input-row { display: flex; gap: 10px; }
-  .input-field {
-    flex: 1; padding: 12px 16px; border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.06);
-    background: rgba(255,255,255,0.6);
-    font-size: 14px; font-family: var(--sans);
-    color: var(--text); transition: border-color 0.3s ease;
-    -webkit-appearance: none;
-  }
-  .input-field::placeholder { color: var(--text-faint); font-style: italic; }
-  .input-field:focus { outline: none; border-color: rgba(123,158,135,0.3); }
+/* TODO ITEMS */
+.todo-list { display: flex; flex-direction: column; gap: 8px; }
+.todo-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px;
+  background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.4,0,0.2,1); cursor: pointer;
+  position: relative; animation: fadeInUp 0.4s ease-out both; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.todo-item.done { background: var(--sage-faint); border-color: rgba(123,158,135,0.12); opacity: 0.55; }
+.todo-item.swiping { transition: none; }
+.todo-item.removing { animation: swipeOut 0.35s ease-in forwards; }
+.checkbox { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.13);
+  display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.todo-item.done .checkbox { border-color: var(--cat-color); background: var(--cat-color); }
+.checkbox svg { stroke-dasharray: 14; stroke-dashoffset: 0; animation: checkDraw 0.4s ease-out; }
+.todo-cat-dot { width: 5px; height: 5px; border-radius: 50%; opacity: 0.5; flex-shrink: 0; }
+.todo-text { flex: 1; font-size: 14px; line-height: 1.4; color: var(--text); transition: all 0.4s ease; }
+.todo-item.done .todo-text { color: #A0A89D; text-decoration: line-through; text-decoration-color: rgba(123,158,135,0.3); }
+.delete-hint { font-size: 10px; color: #C88; letter-spacing: 0.5px; opacity: 0; transition: opacity 0.2s;
+  pointer-events: none; position: absolute; right: 16px; }
+.todo-item.show-delete .delete-hint { opacity: 0.6; }
+.todo-item.readonly { cursor: default; opacity: 0.7; }
+.todo-item.readonly.done { opacity: 0.5; }
 
-  .add-btn {
-    padding: 12px 20px; border-radius: 12px; border: none;
-    background: var(--sage); color: white;
-    font-size: 13px; font-family: var(--sans); font-weight: 500;
-    letter-spacing: 0.5px; cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    -webkit-appearance: none;
-  }
-  .add-btn:active { transform: scale(0.95); background: #6B8E77; }
+/* EMPTY */
+.empty-state { text-align: center; padding: 52px 20px; animation: fadeInUp 0.8s 0.5s ease-out both; }
+.empty-icon { font-size: 36px; margin-bottom: 14px; animation: breathe 4s ease-in-out infinite; display: inline-block; }
+.empty-title { font-family: var(--serif); font-size: 18px; color: var(--text-muted); font-style: italic; line-height: 1.6; }
+.empty-sub { font-size: 12px; color: var(--text-faint); margin-top: 6px; letter-spacing: 0.4px; }
 
-  /* ===== FILTERS ===== */
-  .filters {
-    display: flex; gap: 4px; margin-bottom: 14px;
-    animation: fadeInUp 0.8s 0.45s ease-out both;
-  }
-  .filter-btn {
-    padding: 6px 12px; border-radius: 8px; border: none;
-    background: transparent; color: #AAA;
-    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-    font-family: var(--sans); cursor: pointer;
-    transition: all 0.3s ease; -webkit-appearance: none;
-  }
-  .filter-btn.active { background: var(--sage-light); color: #4A5D52; }
+/* COMPLETION */
+.completion-card { text-align: center; padding: 28px 20px; margin-top: 16px;
+  background: linear-gradient(135deg, var(--sage-faint), rgba(196,149,106,0.05));
+  border-radius: 20px; animation: fadeInUp 0.8s ease-out; }
+.completion-title { font-family: var(--serif); font-size: 20px; color: #4A5D52; font-weight: 300; line-height: 1.5; }
+.completion-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; letter-spacing: 0.4px; }
 
-  /* ===== TODO ITEMS ===== */
-  .todo-list { display: flex; flex-direction: column; gap: 8px; }
+/* CELEBRATION */
+.celebration { position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  display: flex; align-items: center; justify-content: center; }
+.celebration span { position: absolute; font-size: 22px; opacity: 0; animation: celebrateBurst 1.6s ease-out forwards; }
 
-  .todo-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px; border-radius: 14px;
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0,0,0,0.05);
-    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-    cursor: pointer; position: relative;
-    animation: fadeInUp 0.4s ease-out both;
-    touch-action: pan-y;
-    user-select: none; -webkit-user-select: none;
-  }
-  .todo-item.done {
-    background: var(--sage-faint);
-    border-color: rgba(123,158,135,0.12);
-    opacity: 0.55;
-  }
-  .todo-item.swiping { transition: none; }
-  .todo-item.removing { animation: swipeOut 0.35s ease-in forwards; }
+/* FOOTER */
+.footer-orb { text-align: center; margin-top: 44px; opacity: 0.35; }
 
-  .checkbox {
-    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
-    border: 2px solid rgba(0,0,0,0.13);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  .todo-item.done .checkbox {
-    border-color: var(--cat-color);
-    background: var(--cat-color);
-  }
-  .checkbox svg {
-    stroke-dasharray: 14; stroke-dashoffset: 0;
-    animation: checkDraw 0.4s ease-out;
-  }
+/* INSTALL BANNER */
+.install-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 20px; padding-bottom: calc(16px + var(--safe-bottom));
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.06); display: flex; align-items: center; gap: 14px; animation: fadeInUp 0.6s ease-out; }
+.install-banner.hidden { display: none; }
+.install-text { flex: 1; }
+.install-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.install-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.install-btn { padding: 10px 18px; border-radius: 10px; border: none; background: var(--sage); color: white;
+  font-size: 12px; font-family: var(--sans); font-weight: 500; cursor: pointer; -webkit-appearance: none; }
+.install-dismiss { background: none; border: none; color: #AAA; font-size: 18px; cursor: pointer; padding: 4px; -webkit-appearance: none; }
 
-  .todo-cat-dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    opacity: 0.5; flex-shrink: 0;
-  }
-  .todo-text {
-    flex: 1; font-size: 14px; line-height: 1.4;
-    color: var(--text); transition: all 0.4s ease;
-  }
-  .todo-item.done .todo-text {
-    color: #A0A89D;
-    text-decoration: line-through;
-    text-decoration-color: rgba(123,158,135,0.3);
-  }
-  .delete-hint {
-    font-size: 10px; color: #C88; letter-spacing: 0.5px;
-    opacity: 0; transition: opacity 0.2s; pointer-events: none;
-    position: absolute; right: 16px;
-  }
-  .todo-item.show-delete .delete-hint { opacity: 0.6; }
+/* === HISTORY VIEW === */
+.date-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  animation: fadeInUp 0.6s ease-out; }
+.date-nav-btn { background: none; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px;
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); font-size: 16px; transition: all 0.2s; -webkit-appearance: none; }
+.date-nav-btn:active { background: var(--sage-light); }
+.date-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.date-nav-label { font-family: var(--serif); font-size: 18px; color: var(--text); font-weight: 400; }
 
-  /* ===== EMPTY STATE ===== */
-  .empty-state {
-    text-align: center; padding: 52px 20px;
-    animation: fadeInUp 0.8s 0.5s ease-out both;
-  }
-  .empty-icon {
-    font-size: 36px; margin-bottom: 14px;
-    animation: breathe 4s ease-in-out infinite;
-    display: inline-block;
-  }
-  .empty-title {
-    font-family: var(--serif); font-size: 18px;
-    color: var(--text-muted); font-style: italic; line-height: 1.6;
-  }
-  .empty-sub {
-    font-size: 12px; color: var(--text-faint);
-    margin-top: 6px; letter-spacing: 0.4px;
-  }
+/* WEEK STRIP */
+.week-strip { display: flex; gap: 4px; margin-bottom: 24px; animation: fadeInUp 0.6s 0.1s ease-out both; }
+.week-day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 10px 4px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;
+  border: 1px solid transparent; -webkit-appearance: none; background: none; }
+.week-day:active { transform: scale(0.95); }
+.week-day.selected { background: var(--glass); border-color: var(--sage); }
+.week-day.today { border-color: rgba(123,158,135,0.3); }
+.week-day-name { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-faint); }
+.week-day-num { font-family: var(--serif); font-size: 16px; color: var(--text-muted); font-weight: 400; }
+.week-day.selected .week-day-num { color: var(--text); font-weight: 500; }
+.week-day-dot { width: 5px; height: 5px; border-radius: 50%; }
+.week-day-dot.has-tasks { background: var(--sage); }
+.week-day-dot.all-done { background: var(--sage); }
+.week-day-dot.partial { background: var(--earth); }
+.week-day-dot.empty { background: transparent; }
 
-  /* ===== COMPLETION ===== */
-  .completion-card {
-    text-align: center; padding: 28px 20px; margin-top: 16px;
-    background: linear-gradient(135deg, var(--sage-faint), rgba(196,149,106,0.05));
-    border-radius: 20px; animation: fadeInUp 0.8s ease-out;
-  }
-  .completion-title {
-    font-family: var(--serif); font-size: 20px;
-    color: #4A5D52; font-weight: 300; line-height: 1.5;
-  }
-  .completion-sub {
-    font-size: 12px; color: var(--text-muted);
-    margin-top: 6px; letter-spacing: 0.4px;
-  }
+/* INSIGHTS CARD */
+.insights-card { padding: 24px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+  margin-bottom: 24px; animation: fadeInUp 0.6s 0.2s ease-out both; }
+.insights-title { font-family: var(--serif); font-size: 18px; color: var(--text); margin-bottom: 16px; font-weight: 400; }
+.insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.insight-item { text-align: center; }
+.insight-num { font-family: var(--serif); font-size: 24px; font-weight: 300; color: var(--text); }
+.insight-label { font-size: 10px; letter-spacing: 0.8px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; }
+.insight-bar-row { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+.insight-bar-label { font-size: 10px; color: var(--text-muted); width: 32px; text-align: right; flex-shrink: 0; }
+.insight-bar-track { flex: 1; height: 6px; border-radius: 3px; background: rgba(0,0,0,0.04); overflow: hidden; }
+.insight-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.insight-bar-count { font-size: 10px; color: var(--text-faint); width: 16px; flex-shrink: 0; }
 
-  /* ===== CELEBRATION OVERLAY ===== */
-  .celebration {
-    position: fixed; inset: 0; pointer-events: none; z-index: 999;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .celebration span {
-    position: absolute; font-size: 22px; opacity: 0;
-    animation: celebrateBurst 1.6s ease-out forwards;
-  }
+/* PAST DAY HEADER */
+.past-day-header { text-align: center; margin-bottom: 20px; animation: fadeInUp 0.6s ease-out; }
+.past-day-title { font-family: var(--serif); font-size: 22px; color: var(--text); font-weight: 300; }
+.past-day-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
-  /* ===== FOOTER ===== */
-  .footer-orb { text-align: center; margin-top: 44px; opacity: 0.35; }
-
-  /* ===== INSTALL BANNER ===== */
-  .install-banner {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    padding: 16px 20px; padding-bottom: calc(16px + var(--safe-bottom));
-    background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(0,0,0,0.06);
-    display: flex; align-items: center; gap: 14px;
-    animation: fadeInUp 0.6s ease-out;
-  }
-  .install-banner.hidden { display: none; }
-  .install-text { flex: 1; }
-  .install-title { font-size: 13px; font-weight: 500; color: var(--text); }
-  .install-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .install-btn {
-    padding: 10px 18px; border-radius: 10px; border: none;
-    background: var(--sage); color: white; font-size: 12px;
-    font-family: var(--sans); font-weight: 500; cursor: pointer;
-    -webkit-appearance: none;
-  }
-  .install-dismiss {
-    background: none; border: none; color: #AAA;
-    font-size: 18px; cursor: pointer; padding: 4px;
-    -webkit-appearance: none;
-  }
-
-  /* ===== HAPTIC-LIKE VISUAL FEEDBACK ===== */
-  @media (hover: hover) {
-    .todo-item:hover { transform: translateX(3px); }
-    .cat-btn:hover { transform: scale(1.06); }
-    .add-btn:hover { background: #6B8E77; transform: scale(1.03); }
-  }
-
-  /* ===== SCROLLBAR ===== */
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(123,158,135,0.2); border-radius: 3px; }
+@media (hover: hover) {
+  .todo-item:hover { transform: translateX(3px); }
+  .cat-btn:hover { transform: scale(1.06); }
+  .add-btn:hover { background: #6B8E77; transform: scale(1.03); }
+}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(123,158,135,0.2); border-radius: 3px; }
 </style>
 </head>
-
 <body>
 <div id="app"></div>
-
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
-
 <script>
-const { useState, useEffect, useRef, useCallback, createElement: h, Fragment } = React;
+const {useState,useEffect,useRef,useCallback,useMemo,createElement:h,Fragment}=React;
 
-// ===== DATA =====
-const CATEGORIES = [
-  { id: 'mind', label: 'Mind', icon: '◯', color: '#7B9E87' },
-  { id: 'body', label: 'Body', icon: '△', color: '#C4956A' },
-  { id: 'work', label: 'Work', icon: '□', color: '#8B9FC5' },
-  { id: 'soul', label: 'Soul', icon: '◇', color: '#B8A0C8' },
-];
+const CATS=[{id:'mind',label:'Mind',icon:'◯',color:'#7B9E87'},{id:'body',label:'Body',icon:'△',color:'#C4956A'},{id:'work',label:'Work',icon:'□',color:'#8B9FC5'},{id:'soul',label:'Soul',icon:'◇',color:'#B8A0C8'}];
+const AFFS=["Small steps compound into transformation.","You showed up today. That matters.","Progress, not perfection.","Each task completed is a promise kept to yourself.","The river doesn't rush. It arrives.","You are building the life you want.","Consistency is quiet power.","Rest is part of the rhythm.","Your only competition is who you were yesterday.","What you do today is shaping tomorrow.","Breathe. Begin. Believe.","Discipline is choosing what you want most over what you want now."];
+const CELEB=['✦','❋','✧','⟡','◈','✺','⊹','⋆'];
+const DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-const AFFIRMATIONS = [
-  "Small steps compound into transformation.",
-  "You showed up today. That matters.",
-  "Progress, not perfection.",
-  "Each task completed is a promise kept to yourself.",
-  "The river doesn't rush. It arrives.",
-  "You are building the life you want.",
-  "Consistency is quiet power.",
-  "Rest is part of the rhythm.",
-  "Your only competition is who you were yesterday.",
-  "What you do today is shaping tomorrow.",
-  "Breathe. Begin. Believe.",
-  "Discipline is choosing what you want most over what you want now.",
-];
+const fmt=d=>d.toISOString().split('T')[0];
+const getToday=()=>fmt(new Date());
+const parseDate=s=>{const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);};
+const addDays=(s,n)=>{const d=parseDate(s);d.setDate(d.getDate()+n);return fmt(d);};
+const isSameDay=(a,b)=>a===b;
+const load=()=>{try{return JSON.parse(localStorage.getItem('zen-todo')||'null')}catch{return null}};
+const save=d=>{try{localStorage.setItem('zen-todo',JSON.stringify(d))}catch{}};
 
-const CELEBRATIONS = ['✦', '❋', '✧', '⟡', '◈', '✺', '⊹', '⋆'];
+function getWeekDays(dateStr){const d=parseDate(dateStr);const day=d.getDay();const mon=new Date(d);mon.setDate(d.getDate()-day);
+  return Array.from({length:7},(_,i)=>{const dd=new Date(mon);dd.setDate(mon.getDate()+i);return fmt(dd);});}
 
-const getToday = () => new Date().toISOString().split('T')[0];
+// Components
+function Particles(){return h(Fragment,null,Array.from({length:10},(_,i)=>h('div',{key:i,className:'particle',style:{left:`${8+i*9}%`,animationDelay:`${i*1.8}s`}})));}
+function Celebration({onDone}){useEffect(()=>{const t=setTimeout(onDone,1800);return()=>clearTimeout(t)},[]);
+  return h('div',{className:'celebration'},Array.from({length:8},(_,i)=>h('span',{key:i,style:{animationDelay:`${i*.07}s`,color:CATS[i%4].color,transform:`rotate(${i*45}deg) translateY(-60px)`}},CELEB[i])));}
+function ProgressRing({completed,total}){const p=total===0?0:completed/total,r=34,c=2*Math.PI*r;
+  return h('div',{className:'progress-ring'},h('svg',{width:80,height:80},h('circle',{cx:40,cy:40,r,fill:'none',stroke:'rgba(123,158,135,0.1)',strokeWidth:2.5}),
+    h('circle',{cx:40,cy:40,r,fill:'none',stroke:'#7B9E87',strokeWidth:2.5,strokeDasharray:c,strokeDashoffset:c*(1-p),strokeLinecap:'round',style:{transition:'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)'}})),
+    h('div',{className:'count'},h('span',{className:'num'},completed),h('span',{className:'label'},`of ${total}`)));}
 
-function load() {
-  try { return JSON.parse(localStorage.getItem('zen-todo') || 'null'); } catch { return null; }
-}
-function save(d) {
-  try { localStorage.setItem('zen-todo', JSON.stringify(d)); } catch {}
-}
+function TodoItem({todo,onToggle,onDelete,readonly}){
+  const cat=CATS.find(c=>c.id===todo.category)||CATS[0];
+  const startX=useRef(0),currentX=useRef(0),elRef=useRef(null);
+  const[showDel,setShowDel]=useState(false);
+  const onTS=e=>{if(readonly)return;startX.current=e.touches[0].clientX;currentX.current=0;elRef.current?.classList.add('swiping');};
+  const onTM=e=>{if(readonly)return;const dx=e.touches[0].clientX-startX.current;currentX.current=dx;
+    if(dx<-20&&elRef.current){elRef.current.style.transform=`translateX(${Math.max(dx,-100)}px)`;setShowDel(dx<-50);}};
+  const onTE=()=>{if(readonly)return;if(elRef.current){elRef.current.classList.remove('swiping');
+    if(currentX.current<-80){elRef.current.classList.add('removing');setTimeout(()=>onDelete(todo.id),350);}
+    else{elRef.current.style.transform='';setShowDel(false);}}};
+  return h('div',{ref:elRef,className:`todo-item ${todo.done?'done':''} ${showDel?'show-delete':''} ${readonly?'readonly':''}`,
+    style:{'--cat-color':cat.color},onClick:()=>!readonly&&onToggle(todo.id),onTouchStart:onTS,onTouchMove:onTM,onTouchEnd:onTE},
+    h('div',{className:'checkbox'},todo.done&&h('svg',{width:12,height:12,viewBox:'0 0 12 12',fill:'none'},
+      h('path',{d:'M2.5 6L5 8.5L9.5 3.5',stroke:'white',strokeWidth:1.5,strokeLinecap:'round',strokeLinejoin:'round'}))),
+    h('div',{className:'todo-cat-dot',style:{background:cat.color}}),
+    h('span',{className:'todo-text'},todo.text),
+    !readonly&&h('span',{className:'delete-hint'},'← delete'));}
 
-// ===== COMPONENTS =====
+function WeekStrip({selectedDate,onSelect,todos}){
+  const days=getWeekDays(selectedDate);const today=getToday();
+  return h('div',{className:'week-strip'},days.map(d=>{
+    const dayTodos=todos.filter(t=>t.date===d);const done=dayTodos.filter(t=>t.done).length;
+    const total=dayTodos.length;const dt=parseDate(d);
+    let dotClass='empty';if(total>0){dotClass=done===total?'all-done':'partial';}
+    return h('button',{key:d,className:`week-day ${d===selectedDate?'selected':''} ${d===today?'today':''}`,
+      onClick:()=>onSelect(d)},
+      h('span',{className:'week-day-name'},DAYNAMES[dt.getDay()]),
+      h('span',{className:'week-day-num'},dt.getDate()),
+      h('div',{className:`week-day-dot ${dotClass}`}));}));}
 
-function Particles() {
-  return h(Fragment, null,
-    Array.from({ length: 10 }, (_, i) =>
-      h('div', {
-        key: i, className: 'particle',
-        style: { left: `${8 + i * 9}%`, animationDelay: `${i * 1.8}s` }
-      })
-    )
-  );
-}
+function InsightsCard({todos}){
+  const today=getToday();const days7=Array.from({length:7},(_,i)=>addDays(today,-i));
+  const week=todos.filter(t=>days7.includes(t.date));
+  const done7=week.filter(t=>t.done).length,total7=week.length;
+  const rate7=total7?Math.round(done7/total7*100):0;
+  const daysActive=new Set(week.map(t=>t.date)).size;
+  const catCounts=CATS.map(cat=>{const c=week.filter(t=>t.category===cat.id);return{...cat,total:c.length,done:c.filter(t=>t.done).length};});
+  const maxCat=Math.max(...catCounts.map(c=>c.total),1);
+  return h('div',{className:'insights-card'},
+    h('div',{className:'insights-title'},'This Week'),
+    h('div',{className:'insights-grid'},
+      h('div',{className:'insight-item'},h('div',{className:'insight-num'},done7),h('div',{className:'insight-label'},'Done')),
+      h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${rate7}%`),h('div',{className:'insight-label'},'Rate')),
+      h('div',{className:'insight-item'},h('div',{className:'insight-num'},daysActive),h('div',{className:'insight-label'},'Active Days'))),
+    catCounts.map(cat=>h('div',{key:cat.id,className:'insight-bar-row'},
+      h('span',{className:'insight-bar-label',style:{color:cat.color}},cat.icon),
+      h('div',{className:'insight-bar-track'},h('div',{className:'insight-bar-fill',style:{width:`${(cat.total/maxCat)*100}%`,background:cat.color}})),
+      h('span',{className:'insight-bar-count'},`${cat.done}/${cat.total}`))));}
 
-function Celebration({ onDone }) {
-  useEffect(() => { const t = setTimeout(onDone, 1800); return () => clearTimeout(t); }, []);
-  return h('div', { className: 'celebration' },
-    Array.from({ length: 8 }, (_, i) =>
-      h('span', {
-        key: i,
-        style: {
-          animationDelay: `${i * 0.07}s`,
-          color: CATEGORIES[i % 4].color,
-          transform: `rotate(${i * 45}deg) translateY(-60px)`,
-        }
-      }, CELEBRATIONS[i])
-    )
-  );
-}
+// MAIN APP
+function App(){
+  const stored=load();
+  const[todos,setTodos]=useState(stored?.todos||[]);
+  const[input,setInput]=useState('');
+  const[selectedCat,setSelectedCat]=useState('mind');
+  const[streak,setStreak]=useState(stored?.streak||0);
+  const[lastComplete,setLastComplete]=useState(stored?.lastComplete||null);
+  const[showCelebration,setShowCelebration]=useState(false);
+  const[filter,setFilter]=useState('all');
+  const[view,setView]=useState('today'); // 'today' | 'history' | 'insights'
+  const[historyDate,setHistoryDate]=useState(getToday());
+  const[affirmation]=useState(()=>AFFS[Math.floor(Math.random()*AFFS.length)]);
+  const[deferredPrompt,setDeferredPrompt]=useState(null);
+  const[showInstall,setShowInstall]=useState(false);
+  const inputRef=useRef(null);
 
-function ProgressRing({ completed, total }) {
-  const pct = total === 0 ? 0 : completed / total;
-  const r = 34, circ = 2 * Math.PI * r;
-  return h('div', { className: 'progress-ring' },
-    h('svg', { width: 80, height: 80 },
-      h('circle', { cx: 40, cy: 40, r, fill: 'none', stroke: 'rgba(123,158,135,0.1)', strokeWidth: 2.5 }),
-      h('circle', { cx: 40, cy: 40, r, fill: 'none', stroke: '#7B9E87', strokeWidth: 2.5,
-        strokeDasharray: circ, strokeDashoffset: circ * (1 - pct),
-        strokeLinecap: 'round',
-        style: { transition: 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)' }
-      })
-    ),
-    h('div', { className: 'count' },
-      h('span', { className: 'num' }, completed),
-      h('span', { className: 'label' }, `of ${total}`)
-    )
-  );
-}
+  const today=getToday();
+  const isToday=historyDate===today;
 
-function TodoItem({ todo, onToggle, onDelete }) {
-  const cat = CATEGORIES.find(c => c.id === todo.category) || CATEGORIES[0];
-  const startX = useRef(0);
-  const currentX = useRef(0);
-  const elRef = useRef(null);
-  const [showDel, setShowDel] = useState(false);
+  useEffect(()=>{save({todos,streak,lastComplete})},[todos,streak,lastComplete]);
 
-  const onTouchStart = (e) => {
-    startX.current = e.touches[0].clientX;
-    currentX.current = 0;
-    if (elRef.current) elRef.current.classList.add('swiping');
-  };
-  const onTouchMove = (e) => {
-    const dx = e.touches[0].clientX - startX.current;
-    currentX.current = dx;
-    if (dx < -20 && elRef.current) {
-      elRef.current.style.transform = `translateX(${Math.max(dx, -100)}px)`;
-      setShowDel(dx < -50);
-    }
-  };
-  const onTouchEnd = () => {
-    if (elRef.current) {
-      elRef.current.classList.remove('swiping');
-      if (currentX.current < -80) {
-        elRef.current.classList.add('removing');
-        setTimeout(() => onDelete(todo.id), 350);
-      } else {
-        elRef.current.style.transform = '';
-        setShowDel(false);
-      }
-    }
-  };
+  // Streak
+  useEffect(()=>{const todayTodos=todos.filter(t=>t.date===today);
+    const allDone=todayTodos.length>0&&todayTodos.every(t=>t.done);
+    if(allDone&&lastComplete!==today){const y=new Date();y.setDate(y.getDate()-1);const yStr=fmt(y);
+      setStreak(s=>lastComplete===yStr?s+1:1);setLastComplete(today);setShowCelebration(true);}
+  },[todos]);
 
-  return h('div', {
-    ref: elRef,
-    className: `todo-item ${todo.done ? 'done' : ''} ${showDel ? 'show-delete' : ''}`,
-    style: { '--cat-color': cat.color },
-    onClick: () => onToggle(todo.id),
-    onTouchStart, onTouchMove, onTouchEnd,
-  },
-    h('div', { className: 'checkbox' },
-      todo.done && h('svg', { width: 12, height: 12, viewBox: '0 0 12 12', fill: 'none' },
-        h('path', {
-          d: 'M2.5 6L5 8.5L9.5 3.5', stroke: 'white',
-          strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round',
-        })
-      )
-    ),
-    h('div', { className: 'todo-cat-dot', style: { background: cat.color } }),
-    h('span', { className: 'todo-text' }, todo.text),
-    h('span', { className: 'delete-hint' }, '← delete')
-  );
-}
+  // PWA
+  useEffect(()=>{const h=e=>{e.preventDefault();setDeferredPrompt(e);setShowInstall(true)};
+    window.addEventListener('beforeinstallprompt',h);return()=>window.removeEventListener('beforeinstallprompt',h)},[]);
+  const installApp=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;setDeferredPrompt(null);setShowInstall(false);};
 
-// ===== MAIN APP =====
-function App() {
-  const stored = load();
-  const [todos, setTodos] = useState(stored?.todos || []);
-  const [input, setInput] = useState('');
-  const [selectedCat, setSelectedCat] = useState('mind');
-  const [streak, setStreak] = useState(stored?.streak || 0);
-  const [lastComplete, setLastComplete] = useState(stored?.lastComplete || null);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [filter, setFilter] = useState('all');
-  const [affirmation] = useState(() => AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)]);
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstall, setShowInstall] = useState(false);
-  const inputRef = useRef(null);
+  const addTodo=useCallback(()=>{const text=input.trim();if(!text)return;
+    setTodos(p=>[...p,{id:Date.now().toString(),text,category:selectedCat,done:false,date:today}]);
+    setInput('');inputRef.current?.focus();},[input,selectedCat]);
+  const toggleTodo=useCallback(id=>{setTodos(p=>p.map(t=>t.id===id?{...t,done:!t.done}:t))},[]);
+  const deleteTodo=useCallback(id=>{setTodos(p=>p.filter(t=>t.id!==id))},[]);
 
-  // Persist
-  useEffect(() => { save({ todos, streak, lastComplete }); }, [todos, streak, lastComplete]);
+  const viewDate=view==='today'?today:historyDate;
+  const dayTodos=todos.filter(t=>t.date===viewDate);
+  const completed=dayTodos.filter(t=>t.done).length;
+  const total=dayTodos.length;
+  const filtered=filter==='all'?dayTodos:filter==='active'?dayTodos.filter(t=>!t.done):dayTodos.filter(t=>t.done);
 
-  // Streak logic
-  useEffect(() => {
-    const today = getToday();
-    const todayTodos = todos.filter(t => t.date === today);
-    const allDone = todayTodos.length > 0 && todayTodos.every(t => t.done);
+  const now=new Date();
+  const greeting=now.getHours()<12?'Good morning':now.getHours()<17?'Good afternoon':'Good evening';
+  const dateStr=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const streakIcon=streak>=7?'🌿':streak>=3?'🌱':'🫘';
 
-    if (allDone && lastComplete !== today) {
-      const y = new Date(); y.setDate(y.getDate() - 1);
-      const yStr = y.toISOString().split('T')[0];
-      setStreak(s => lastComplete === yStr ? s + 1 : 1);
-      setLastComplete(today);
-      setShowCelebration(true);
-    }
-  }, [todos]);
+  const histDateObj=parseDate(historyDate);
+  const histDateLabel=histDateObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const canGoForward=historyDate<today;
 
-  // PWA install
-  useEffect(() => {
-    const handler = (e) => { e.preventDefault(); setDeferredPrompt(e); setShowInstall(true); };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+  return h('div',{className:'app'},
+    h(Particles),h('div',{className:'blob blob-1'}),h('div',{className:'blob blob-2'}),
+    showCelebration&&h(Celebration,{onDone:()=>setShowCelebration(false)}),
+    h('div',{className:'container'},
 
-  const installApp = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setDeferredPrompt(null);
-    setShowInstall(false);
-  };
+      // Nav
+      h('div',{className:'nav-bar'},
+        h('button',{className:`nav-btn ${view==='today'?'active':''}`,onClick:()=>{setView('today');setFilter('all');}},'Today'),
+        h('button',{className:`nav-btn ${view==='history'?'active':''}`,onClick:()=>{setView('history');setHistoryDate(today);setFilter('all');}},'History'),
+        h('button',{className:`nav-btn ${view==='insights'?'active':''}`,onClick:()=>setView('insights')},'Insights')),
 
-  const addTodo = useCallback(() => {
-    const text = input.trim();
-    if (!text) return;
-    setTodos(prev => [...prev, {
-      id: Date.now().toString(), text, category: selectedCat,
-      done: false, date: getToday(),
-    }]);
-    setInput('');
-    inputRef.current?.focus();
-  }, [input, selectedCat]);
+      // === TODAY VIEW ===
+      view==='today'&&h(Fragment,null,
+        h('div',{className:'header'},
+          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
+            h('div',null,h('p',{className:'date-label'},dateStr),h('h1',{className:'greeting'},greeting)),
+            h('div',{className:`streak-badge ${streak>0?'':'empty'}`},
+              h('span',{className:'streak-icon'},streakIcon),h('span',null,`${streak} day${streak!==1?'s':''}`))),
+          h('p',{className:'affirmation'},`"${affirmation}"`)),
 
-  const toggleTodo = useCallback((id) => {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  }, []);
+        h('div',{className:'progress-card'},h(ProgressRing,{completed,total}),
+          h('div',{className:'progress-info'},
+            h('p',{className:'progress-status'},total===0?'Set your intentions for today':completed===total?'All intentions fulfilled ✦':`${total-completed} intention${total-completed!==1?'s':''} remaining`),
+            h('div',{className:'cat-pills'},CATS.map(cat=>{const count=dayTodos.filter(t=>t.category===cat.id&&!t.done).length;
+              if(!count)return null;return h('div',{key:cat.id,className:'cat-pill',style:{color:cat.color}},
+                h('div',{className:'cat-pill-dot',style:{background:cat.color}}),h('span',null,count));}))),
+          h('div',{className:'breathing-orb'})),
 
-  const deleteTodo = useCallback((id) => {
-    setTodos(prev => prev.filter(t => t.id !== id));
-  }, []);
+        h('div',{className:'input-card'},
+          h('div',{className:'cat-selector'},CATS.map(cat=>h('button',{key:cat.id,
+            className:`cat-btn ${selectedCat===cat.id?'active':''}`,style:{'--cat-color':cat.color},
+            onClick:()=>setSelectedCat(cat.id)},h('span',{className:'cat-btn-icon'},cat.icon),' '+cat.label))),
+          h('div',{className:'input-row'},
+            h('input',{ref:inputRef,className:'input-field',value:input,onChange:e=>setInput(e.target.value),
+              onKeyDown:e=>e.key==='Enter'&&addTodo(),placeholder:'Set an intention…',enterKeyHint:'done'}),
+            h('button',{className:'add-btn',onClick:addTodo},'Add'))),
 
-  const today = getToday();
-  const todayTodos = todos.filter(t => t.date === today);
-  const completed = todayTodos.filter(t => t.done).length;
-  const total = todayTodos.length;
-  const filtered = filter === 'all' ? todayTodos :
-    filter === 'active' ? todayTodos.filter(t => !t.done) :
-    todayTodos.filter(t => t.done);
+        total>0&&h('div',{className:'filters'},['all','active','done'].map(f=>
+          h('button',{key:f,className:`filter-btn ${filter===f?'active':''}`,onClick:()=>setFilter(f)},f))),
 
-  const now = new Date();
-  const greeting = now.getHours() < 12 ? 'Good morning' :
-    now.getHours() < 17 ? 'Good afternoon' : 'Good evening';
-  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        h('div',{className:'todo-list'},filtered.map((todo,i)=>
+          h('div',{key:todo.id,style:{animationDelay:`${i*.05}s`}},
+            h(TodoItem,{todo,onToggle:toggleTodo,onDelete:deleteTodo})))),
 
-  const streakIcon = streak >= 7 ? '🌿' : streak >= 3 ? '🌱' : '🫘';
+        total===0&&h('div',{className:'empty-state'},h('div',{className:'empty-icon'},'◯'),
+          h('p',{className:'empty-title'},'Begin with one small intention'),
+          h('p',{className:'empty-sub'},'Organize by mind, body, work, or soul')),
 
-  return h('div', { className: 'app' },
-    // Ambient
-    h(Particles),
-    h('div', { className: 'blob blob-1' }),
-    h('div', { className: 'blob blob-2' }),
+        total>0&&completed===total&&h('div',{className:'completion-card'},
+          h('p',{className:'completion-title'},'All intentions fulfilled'),
+          h('p',{className:'completion-sub'},'You honored your commitments today. Rest well.'))),
 
-    showCelebration && h(Celebration, { onDone: () => setShowCelebration(false) }),
+      // === HISTORY VIEW ===
+      view==='history'&&h(Fragment,null,
+        h('div',{className:'date-nav'},
+          h('button',{className:'date-nav-btn',onClick:()=>setHistoryDate(d=>addDays(d,-7))},'‹‹'),
+          h('button',{className:'date-nav-btn',onClick:()=>setHistoryDate(d=>addDays(d,-1))},'‹'),
+          h('div',{className:'date-nav-label'},isSameDay(historyDate,today)?'Today':histDateLabel),
+          h('button',{className:'date-nav-btn',disabled:!canGoForward,onClick:()=>setHistoryDate(d=>addDays(d,1))},'›'),
+          h('button',{className:'date-nav-btn',disabled:!canGoForward,onClick:()=>{
+            const next=addDays(historyDate,7);setHistoryDate(next>today?today:next);}},'››')),
 
-    h('div', { className: 'container' },
+        h(WeekStrip,{selectedDate:historyDate,onSelect:setHistoryDate,todos}),
 
-      // Header
-      h('div', { className: 'header' },
-        h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } },
-          h('div', null,
-            h('p', { className: 'date-label' }, dateStr),
-            h('h1', { className: 'greeting' }, greeting)
-          ),
-          h('div', { className: `streak-badge ${streak > 0 ? '' : 'empty'}` },
-            h('span', { className: 'streak-icon' }, streakIcon),
-            h('span', null, `${streak} day${streak !== 1 ? 's' : ''}`)
-          )
-        ),
-        h('p', { className: 'affirmation' }, `"${affirmation}"`)
-      ),
+        dayTodos.length>0&&h(Fragment,null,
+          h('div',{className:'past-day-header'},
+            h('div',{className:'past-day-title'},`${completed} of ${total} fulfilled`),
+            h('div',{className:'past-day-sub'},total>0?`${Math.round(completed/total*100)}% completion rate`:'')),
+          h('div',{className:'todo-list'},dayTodos.map((todo,i)=>
+            h('div',{key:todo.id,style:{animationDelay:`${i*.05}s`}},
+              h(TodoItem,{todo,onToggle:toggleTodo,onDelete:deleteTodo,readonly:!isSameDay(historyDate,today)}))))),
 
-      // Progress
-      h('div', { className: 'progress-card' },
-        h(ProgressRing, { completed, total }),
-        h('div', { className: 'progress-info' },
-          h('p', { className: 'progress-status' },
-            total === 0 ? 'Set your intentions for today' :
-            completed === total ? 'All intentions fulfilled ✦' :
-            `${total - completed} intention${total - completed !== 1 ? 's' : ''} remaining`
-          ),
-          h('div', { className: 'cat-pills' },
-            CATEGORIES.map(cat => {
-              const count = todayTodos.filter(t => t.category === cat.id && !t.done).length;
-              if (!count) return null;
-              return h('div', { key: cat.id, className: 'cat-pill', style: { color: cat.color } },
-                h('div', { className: 'cat-pill-dot', style: { background: cat.color } }),
-                h('span', null, count)
-              );
-            })
-          )
-        ),
-        h('div', { className: 'breathing-orb' })
-      ),
+        dayTodos.length===0&&h('div',{className:'empty-state'},
+          h('div',{className:'empty-icon'},'◯'),
+          h('p',{className:'empty-title'},isSameDay(historyDate,today)?'No intentions set yet':
+            parseDate(historyDate)>new Date()?'A future yet to unfold':'A day of rest, perhaps'),
+          h('p',{className:'empty-sub'},'No intentions were recorded for this day'))),
 
-      // Input
-      h('div', { className: 'input-card' },
-        h('div', { className: 'cat-selector' },
-          CATEGORIES.map(cat =>
-            h('button', {
-              key: cat.id,
-              className: `cat-btn ${selectedCat === cat.id ? 'active' : ''}`,
-              style: { '--cat-color': cat.color },
-              onClick: () => setSelectedCat(cat.id),
-            },
-              h('span', { className: 'cat-btn-icon' }, cat.icon),
-              ' ' + cat.label
-            )
-          )
-        ),
-        h('div', { className: 'input-row' },
-          h('input', {
-            ref: inputRef,
-            className: 'input-field',
-            value: input,
-            onChange: e => setInput(e.target.value),
-            onKeyDown: e => e.key === 'Enter' && addTodo(),
-            placeholder: 'Set an intention…',
-            enterKeyHint: 'done',
-          }),
-          h('button', { className: 'add-btn', onClick: addTodo }, 'Add')
-        )
-      ),
+      // === INSIGHTS VIEW ===
+      view==='insights'&&h(Fragment,null,
+        h('div',{className:'header',style:{marginBottom:20}},
+          h('h1',{className:'greeting',style:{fontSize:26}},'Your Journey')),
+        h(InsightsCard,{todos}),
 
-      // Filters
-      total > 0 && h('div', { className: 'filters' },
-        ['all', 'active', 'done'].map(f =>
-          h('button', {
-            key: f,
-            className: `filter-btn ${filter === f ? 'active' : ''}`,
-            onClick: () => setFilter(f),
-          }, f)
-        )
-      ),
-
-      // Todo list
-      h('div', { className: 'todo-list' },
-        filtered.map((todo, i) =>
-          h('div', { key: todo.id, style: { animationDelay: `${i * 0.05}s` } },
-            h(TodoItem, { todo, onToggle: toggleTodo, onDelete: deleteTodo })
-          )
-        )
-      ),
-
-      // Empty state
-      total === 0 && h('div', { className: 'empty-state' },
-        h('div', { className: 'empty-icon' }, '◯'),
-        h('p', { className: 'empty-title' }, 'Begin with one small intention'),
-        h('p', { className: 'empty-sub' }, 'Organize by mind, body, work, or soul')
-      ),
-
-      // Completion card
-      total > 0 && completed === total && h('div', { className: 'completion-card' },
-        h('p', { className: 'completion-title' }, 'All intentions fulfilled'),
-        h('p', { className: 'completion-sub' }, 'You honored your commitments today. Rest well.')
-      ),
+        // All-time stats
+        (()=>{const allDates=[...new Set(todos.map(t=>t.date))].sort();
+          const totalAll=todos.length,doneAll=todos.filter(t=>t.done).length;
+          const rateAll=totalAll?Math.round(doneAll/totalAll*100):0;
+          const activeDays=allDates.length;
+          // Longest streak calc
+          let maxStrk=0,curStrk=0,prev=null;
+          allDates.forEach(d=>{const dt=todos.filter(t=>t.date===d);const allD=dt.length>0&&dt.every(t=>t.done);
+            if(allD){if(prev&&addDays(prev,1)===d){curStrk++}else{curStrk=1}maxStrk=Math.max(maxStrk,curStrk);prev=d;}
+            else{curStrk=0;prev=null;}});
+          return h('div',{className:'insights-card'},
+            h('div',{className:'insights-title'},'All Time'),
+            h('div',{className:'insights-grid'},
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},doneAll),h('div',{className:'insight-label'},'Completed')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${rateAll}%`),h('div',{className:'insight-label'},'Rate')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},maxStrk),h('div',{className:'insight-label'},'Best Streak'))));})()),
 
       // Footer
-      h('div', { className: 'footer-orb' },
-        h('div', { className: 'breathing-orb', style: { margin: '0 auto' } })
-      )
-    ),
+      h('div',{className:'footer-orb'},h('div',{className:'breathing-orb',style:{margin:'0 auto'}}))),
 
-    // Install banner
-    showInstall && h('div', { className: 'install-banner' },
-      h('div', { className: 'install-text' },
-        h('div', { className: 'install-title' }, 'Install Zen Todo'),
-        h('div', { className: 'install-sub' }, 'Add to home screen for a native feel')
-      ),
-      h('button', { className: 'install-btn', onClick: installApp }, 'Install'),
-      h('button', { className: 'install-dismiss', onClick: () => setShowInstall(false) }, '×')
-    )
-  );
+    showInstall&&h('div',{className:'install-banner'},
+      h('div',{className:'install-text'},h('div',{className:'install-title'},'Install Zen Todo'),
+        h('div',{className:'install-sub'},'Add to home screen for a native feel')),
+      h('button',{className:'install-btn',onClick:installApp},'Install'),
+      h('button',{className:'install-dismiss',onClick:()=>setShowInstall(false)},'×')));
 }
 
 ReactDOM.createRoot(document.getElementById('app')).render(h(App));
-
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
 </html>
