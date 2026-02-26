@@ -353,6 +353,47 @@ body { min-height: 100%; overflow-x: hidden; font-family: var(--sans); color: va
 .modal-option-label { font-size: 13px; color: var(--text); font-weight: 500; }
 .modal-option-desc { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-weight: 300; }
 
+/* GROWTH / XP */
+.growth-card { padding: 20px 22px; border-radius: 22px; background: var(--glass); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); margin-bottom: 24px;
+  animation: fadeInUp 0.6s 0.04s var(--ease-out) both; box-shadow: var(--glass-shadow); }
+.growth-top { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.growth-icon-wrap { position: relative; width: 52px; height: 52px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; }
+.growth-icon { font-size: 32px; transition: all 0.6s var(--ease-spring); line-height: 1; }
+.growth-icon.leveling { animation: levelUpPop 0.8s var(--ease-spring); }
+.growth-glow { position: absolute; inset: -4px; border-radius: 50%; opacity: 0.15;
+  transition: all 0.6s; pointer-events: none; }
+.growth-info { flex: 1; }
+.growth-level { font-family: var(--serif); font-size: 17px; color: var(--text); font-weight: 400;
+  letter-spacing: -0.01em; line-height: 1.2; }
+.growth-sublevel { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-weight: 300; }
+.growth-xp-row { display: flex; align-items: center; gap: 10px; }
+.growth-xp-track { flex: 1; height: 6px; border-radius: 3px; background: rgba(0,0,0,0.04); overflow: hidden; }
+.growth-xp-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--sage), #9AB8A4);
+  transition: width 0.8s var(--ease-out); position: relative; }
+.growth-xp-fill::after { content: ''; position: absolute; right: 0; top: -1px; bottom: -1px; width: 8px;
+  background: rgba(255,255,255,0.5); border-radius: 0 3px 3px 0; filter: blur(2px); }
+.growth-xp-label { font-size: 10px; color: var(--text-faint); white-space: nowrap; font-weight: 300;
+  min-width: 60px; text-align: right; }
+.xp-toast { display: inline-block; font-size: 12px; font-weight: 500; color: var(--sage);
+  animation: xpFloat 1.2s var(--ease-out) forwards; position: fixed; z-index: 800; pointer-events: none; }
+@keyframes xpFloat { 0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(0.8); } }
+@keyframes levelUpPop { 0% { transform: scale(1); } 30% { transform: scale(1.4) rotate(-10deg); }
+  60% { transform: scale(0.9) rotate(5deg); } 100% { transform: scale(1) rotate(0); } }
+.levelup-overlay { position: fixed; inset: 0; z-index: 950; display: flex; align-items: center;
+  justify-content: center; pointer-events: none; animation: fadeIn 0.3s ease-out; }
+.levelup-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border-radius: 24px; padding: 36px 32px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1); animation: fadeInUp 0.5s var(--ease-spring); max-width: 280px; }
+.levelup-icon { font-size: 48px; margin-bottom: 12px; animation: levelUpPop 0.8s 0.2s var(--ease-spring) both; }
+.levelup-title { font-family: var(--serif); font-size: 20px; color: var(--text); font-weight: 400;
+  letter-spacing: -0.01em; margin-bottom: 4px; }
+.levelup-name { font-family: var(--serif); font-size: 26px; color: var(--sage); font-weight: 300;
+  letter-spacing: -0.02em; }
+.levelup-sub { font-size: 12px; color: var(--text-muted); margin-top: 10px; font-weight: 300; line-height: 1.5; }
+
 @media (hover: hover) {
   .todo-item:hover { transform: translateX(3px); box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
   .cat-btn:hover { transform: scale(1.05); }
@@ -378,6 +419,24 @@ const AFFS=["Small steps compound into transformation.","You showed up today. Th
 const CELEB=['✦','❋','✧','⟡','◈','✺','⊹','⋆'];
 const DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Growth levels: xp threshold, icon, name, description
+const LEVELS=[
+  {xp:0,icon:'🫘',name:'Seed',desc:'Every journey begins here'},
+  {xp:50,icon:'🌱',name:'Sprout',desc:'Breaking through the surface'},
+  {xp:150,icon:'🪴',name:'Seedling',desc:'Roots growing deeper'},
+  {xp:300,icon:'🌿',name:'Young Plant',desc:'Reaching for the light'},
+  {xp:500,icon:'🌳',name:'Tree',desc:'Standing tall and steady'},
+  {xp:800,icon:'🏔️',name:'Grove',desc:'Your habits form a sanctuary'},
+  {xp:1200,icon:'🌲',name:'Ancient Forest',desc:'Wisdom in every ring'},
+  {xp:2000,icon:'✦',name:'Transcendent',desc:'Beyond the forest, starlight'}
+];
+const XP_PER_TASK=10;const XP_ALL_DONE_BONUS=25;const XP_STREAK_BONUS=5;
+const getLevel=xp=>{let lvl=LEVELS[0];for(const l of LEVELS){if(xp>=l.xp)lvl=l;else break;}return lvl;};
+const getLevelIndex=xp=>LEVELS.reduce((acc,l,i)=>xp>=l.xp?i:acc,0);
+const getNextLevel=xp=>{const i=getLevelIndex(xp);return i<LEVELS.length-1?LEVELS[i+1]:null;};
+const getLevelProgress=xp=>{const cur=getLevel(xp);const next=getNextLevel(xp);
+  if(!next)return 1;return(xp-cur.xp)/(next.xp-cur.xp);};
 
 const fmt=d=>d.toISOString().split('T')[0];
 const getToday=()=>fmt(new Date());
@@ -493,6 +552,10 @@ function App(){
   const[streak,setStreak]=useState(stored?.streak||0);
   const[lastComplete,setLastComplete]=useState(stored?.lastComplete||null);
   const[showCelebration,setShowCelebration]=useState(false);
+  const[xp,setXp]=useState(stored?.xp||0);
+  const[showLevelUp,setShowLevelUp]=useState(null); // null or level object
+  const[xpFloats,setXpFloats]=useState([]); // [{id,amount,x,y}]
+  const prevLevelRef=useRef(getLevelIndex(stored?.xp||0));
   const[filter,setFilter]=useState('all');
   const[view,setView]=useState('today'); // 'today' | 'history' | 'insights'
   const[historyDate,setHistoryDate]=useState(getToday());
@@ -508,7 +571,7 @@ function App(){
 
   // Export
   const exportData=()=>{
-    const data={version:1,exportedAt:new Date().toISOString(),todos,streak,lastComplete};
+    const data={version:1,exportedAt:new Date().toISOString(),todos,streak,lastComplete,xp};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
     a.href=url;a.download=`zen-todo-backup-${getToday()}.json`;document.body.appendChild(a);
@@ -521,7 +584,7 @@ function App(){
     reader.readAsText(file);e.target.value='';};
   const doImport=(mode)=>{
     try{const d=JSON.parse(modal.data);if(!d.todos||!Array.isArray(d.todos))throw new Error('invalid');
-      if(mode==='replace'){setTodos(d.todos);setStreak(d.streak||0);setLastComplete(d.lastComplete||null);
+      if(mode==='replace'){setTodos(d.todos);setStreak(d.streak||0);setLastComplete(d.lastComplete||null);setXp(d.xp||0);
         showToast(`Replaced with ${d.todos.length} intentions`);}
       else{const existingIds=new Set(todos.map(t=>t.id));const newTodos=d.todos.filter(t=>!existingIds.has(t.id));
         setTodos(p=>[...p,...newTodos]);showToast(`Added ${newTodos.length} new intention${newTodos.length!==1?'s':''}`);}
@@ -529,7 +592,7 @@ function App(){
     setModal(null);};
 
   // Clear all
-  const doClearAll=()=>{setTodos([]);setStreak(0);setLastComplete(null);setModal(null);showToast('All data cleared');};
+  const doClearAll=()=>{setTodos([]);setStreak(0);setLastComplete(null);setXp(0);setModal(null);showToast('All data cleared');};
 
   // === NOTIFICATIONS ===
   const loadReminders=()=>{try{return JSON.parse(localStorage.getItem('zen-reminders')||'null')}catch{return null}};
@@ -578,7 +641,7 @@ function App(){
   const today=getToday();
   const isToday=historyDate===today;
 
-  useEffect(()=>{save({todos,streak,lastComplete})},[todos,streak,lastComplete]);
+  useEffect(()=>{save({todos,streak,lastComplete,xp})},[todos,streak,lastComplete,xp]);
 
   // Streak
   useEffect(()=>{const todayTodos=todos.filter(t=>t.date===today);
@@ -595,7 +658,24 @@ function App(){
   const addTodo=useCallback(()=>{const text=input.trim();if(!text)return;
     setTodos(p=>[...p,{id:Date.now().toString(),text,category:selectedCat,done:false,date:today}]);
     setInput('');inputRef.current?.focus();},[input,selectedCat]);
-  const toggleTodo=useCallback(id=>{setTodos(p=>p.map(t=>t.id===id?{...t,done:!t.done}:t))},[]);
+  const toggleTodo=useCallback(id=>{
+    setTodos(p=>{const updated=p.map(t=>t.id===id?{...t,done:!t.done}:t);
+      const toggled=updated.find(t=>t.id===id);
+      if(toggled&&toggled.done){
+        // Award XP
+        let gain=XP_PER_TASK;if(streak>0)gain+=XP_STREAK_BONUS;
+        const todayItems=updated.filter(t=>t.date===getToday());
+        const allDoneNow=todayItems.length>0&&todayItems.every(t=>t.done);
+        if(allDoneNow)gain+=XP_ALL_DONE_BONUS;
+        setXp(prev=>{const next=prev+gain;
+          const oldLvl=getLevelIndex(prev);const newLvl=getLevelIndex(next);
+          if(newLvl>oldLvl){setTimeout(()=>{setShowLevelUp(LEVELS[newLvl]);
+            setTimeout(()=>setShowLevelUp(null),3000);},400);}
+          return next;});
+        setXpFloats(f=>[...f,{id:Date.now(),amount:gain}]);
+        setTimeout(()=>setXpFloats(f=>f.slice(1)),1500);
+      }
+      return updated;});},[streak]);
   const deleteTodo=useCallback(id=>{setTodos(p=>p.filter(t=>t.id!==id))},[]);
 
   const viewDate=view==='today'?today:historyDate;
@@ -608,6 +688,7 @@ function App(){
   const greeting=now.getHours()<12?'Good morning':now.getHours()<17?'Good afternoon':'Good evening';
   const dateStr=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const streakIcon=streak>=7?'🌿':streak>=3?'🌱':'🫘';
+  const curLevel=getLevel(xp);const nextLevel=getNextLevel(xp);const lvlProgress=getLevelProgress(xp);
 
   const histDateObj=parseDate(historyDate);
   const histDateLabel=histDateObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
@@ -632,6 +713,20 @@ function App(){
             h('div',{className:`streak-badge ${streak>0?'':'empty'}`},
               h('span',{className:'streak-icon'},streakIcon),h('span',null,`${streak} day${streak!==1?'s':''}`))),
           h('p',{className:'affirmation'},`"${affirmation}"`)),
+
+        // Growth / XP card
+        h('div',{className:'growth-card'},
+          h('div',{className:'growth-top'},
+            h('div',{className:'growth-icon-wrap'},
+              h('span',{className:`growth-icon ${showLevelUp?'leveling':''}`},curLevel.icon),
+              h('div',{className:'growth-glow',style:{background:curLevel===LEVELS[LEVELS.length-1]?'gold':'var(--sage)'}})),
+            h('div',{className:'growth-info'},
+              h('div',{className:'growth-level'},curLevel.name),
+              h('div',{className:'growth-sublevel'},nextLevel?`${xp - curLevel.xp} / ${nextLevel.xp - curLevel.xp} XP to ${nextLevel.name}`:`${xp} XP · Max Level`))),
+          h('div',{className:'growth-xp-row'},
+            h('div',{className:'growth-xp-track'},
+              h('div',{className:'growth-xp-fill',style:{width:`${lvlProgress*100}%`}})),
+            h('div',{className:'growth-xp-label'},`${xp} XP`))),
 
         h('div',{className:'progress-card'},h(ProgressRing,{completed,total}),
           h('div',{className:'progress-info'},
@@ -712,7 +807,10 @@ function App(){
             h('div',{className:'insights-grid'},
               h('div',{className:'insight-item'},h('div',{className:'insight-num'},doneAll),h('div',{className:'insight-label'},'Completed')),
               h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${rateAll}%`),h('div',{className:'insight-label'},'Rate')),
-              h('div',{className:'insight-item'},h('div',{className:'insight-num'},maxStrk),h('div',{className:'insight-label'},'Best Streak'))));})(),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},maxStrk),h('div',{className:'insight-label'},'Best Streak')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${curLevel.icon}`),h('div',{className:'insight-label'},curLevel.name)),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},xp),h('div',{className:'insight-label'},'Total XP')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},getLevelIndex(xp)+1),h('div',{className:'insight-label'},`of ${LEVELS.length}`))));})(),
 
         // Reminder settings
         h('div',{className:'reminder-card'},
@@ -782,7 +880,19 @@ function App(){
     modal?.type==='import'&&h(ImportModal,{fileData:modal.data,onImport:doImport,onCancel:()=>setModal(null)}),
     modal?.type==='clearConfirm'&&h(ConfirmModal,{title:'Clear All Data?',
       text:'This will permanently remove all your intentions, streaks, and history. This cannot be undone. Consider exporting first.',
-      confirmLabel:'Clear Everything',confirmClass:'danger',onConfirm:doClearAll,onCancel:()=>setModal(null)}));
+      confirmLabel:'Clear Everything',confirmClass:'danger',onConfirm:doClearAll,onCancel:()=>setModal(null)}),
+
+    // Level up overlay
+    showLevelUp&&h('div',{className:'levelup-overlay'},
+      h('div',{className:'levelup-card'},
+        h('div',{className:'levelup-icon'},showLevelUp.icon),
+        h('div',{className:'levelup-title'},'Level Up'),
+        h('div',{className:'levelup-name'},showLevelUp.name),
+        h('div',{className:'levelup-sub'},showLevelUp.desc))),
+
+    // XP float toasts
+    xpFloats.map(f=>h('span',{key:f.id,className:'xp-toast',
+      style:{top:'45%',left:'50%',transform:'translateX(-50%)'}},`+${f.amount} XP`)));
 }
 
 ReactDOM.createRoot(document.getElementById('app')).render(h(App));
