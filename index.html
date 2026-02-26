@@ -438,7 +438,7 @@ const getNextLevel=xp=>{const i=getLevelIndex(xp);return i<LEVELS.length-1?LEVEL
 const getLevelProgress=xp=>{const cur=getLevel(xp);const next=getNextLevel(xp);
   if(!next)return 1;return(xp-cur.xp)/(next.xp-cur.xp);};
 
-const fmt=d=>d.toISOString().split('T')[0];
+const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dd}`;};
 const getToday=()=>fmt(new Date());
 const parseDate=s=>{const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);};
 const addDays=(s,n)=>{const d=parseDate(s);d.setDate(d.getDate()+n);return fmt(d);};
