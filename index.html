@@ -223,6 +223,44 @@ body { padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
 .past-day-title { font-family: var(--serif); font-size: 22px; color: var(--text); font-weight: 300; }
 .past-day-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
+/* REMINDER SETTINGS */
+.reminder-card { padding: 24px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+  margin-bottom: 24px; animation: fadeInUp 0.6s 0.35s ease-out both; }
+.reminder-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.reminder-title { font-family: var(--serif); font-size: 18px; color: var(--text); font-weight: 400; }
+.reminder-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+.reminder-slots { display: flex; flex-direction: column; gap: 10px; }
+.reminder-slot { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.6); transition: all 0.3s; }
+.reminder-slot.active { border-color: rgba(123,158,135,0.3); background: var(--sage-faint); }
+.reminder-slot-icon { font-size: 18px; width: 36px; height: 36px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; background: var(--sage-light); }
+.reminder-slot-text { flex: 1; }
+.reminder-slot-label { font-size: 13px; color: var(--text); font-weight: 500; }
+.reminder-slot-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.reminder-slot-time { font-size: 12px; color: var(--text-muted); font-family: var(--sans); }
+.toggle-switch { width: 44px; height: 26px; border-radius: 13px; border: none; padding: 2px;
+  background: rgba(0,0,0,0.12); cursor: pointer; transition: all 0.3s; flex-shrink: 0;
+  position: relative; -webkit-appearance: none; }
+.toggle-switch.on { background: var(--sage); }
+.toggle-knob { width: 22px; height: 22px; border-radius: 11px; background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none; }
+.toggle-switch.on .toggle-knob { transform: translateX(18px); }
+.time-picker-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 16px;
+  border-radius: 12px; background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.04); }
+.time-picker-label { font-size: 12px; color: var(--text-muted); flex: 1; }
+.time-picker-input { border: none; background: transparent; font-size: 14px; color: var(--text);
+  font-family: var(--sans); width: 80px; text-align: center; -webkit-appearance: none; }
+.time-picker-input:focus { outline: none; }
+.notif-permission-btn { width: 100%; padding: 12px; border-radius: 12px; border: 1px dashed rgba(123,158,135,0.4);
+  background: var(--sage-faint); color: var(--sage); font-size: 13px; font-family: var(--sans);
+  font-weight: 500; cursor: pointer; transition: all 0.3s; -webkit-appearance: none; margin-top: 12px; }
+.notif-permission-btn:active { transform: scale(0.98); }
+.notif-denied { text-align: center; padding: 12px; border-radius: 12px; background: rgba(200,120,120,0.06);
+  font-size: 12px; color: #B07070; margin-top: 12px; line-height: 1.5; }
+
 /* BACKUP / DATA */
 .data-card { padding: 24px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
@@ -464,6 +502,50 @@ function App(){
   // Clear all
   const doClearAll=()=>{setTodos([]);setStreak(0);setLastComplete(null);setModal(null);showToast('All data cleared');};
 
+  // === NOTIFICATIONS ===
+  const loadReminders=()=>{try{return JSON.parse(localStorage.getItem('zen-reminders')||'null')}catch{return null}};
+  const saveReminders=r=>{try{localStorage.setItem('zen-reminders',JSON.stringify(r))}catch{}};
+  const defaultReminders={morning:{enabled:false,time:'08:00',label:'Morning Intention',desc:'Plan your day'},
+    evening:{enabled:false,time:'21:00',label:'Evening Reflection',desc:'Review your progress'}};
+  const[reminders,setReminders]=useState(()=>loadReminders()||defaultReminders);
+  const[notifPerm,setNotifPerm]=useState(()=>'Notification' in window?Notification.permission:'unsupported');
+  const notifTimers=useRef({});
+  const lastNotifDate=useRef({});
+
+  useEffect(()=>{saveReminders(reminders)},[reminders]);
+
+  const requestNotifPermission=async()=>{
+    if(!('Notification' in window)){showToast('Notifications not supported','error');return;}
+    const p=await Notification.requestPermission();setNotifPerm(p);
+    if(p==='granted')showToast('Notifications enabled ✦');
+    else if(p==='denied')showToast('Notifications blocked by browser','error');};
+
+  const toggleReminder=(key)=>{setReminders(r=>({...r,[key]:{...r[key],enabled:!r[key].enabled}}));};
+  const setReminderTime=(key,time)=>{setReminders(r=>({...r,[key]:{...r[key],time}}));};
+
+  const fireNotification=(title,body)=>{
+    if(notifPerm!=='granted')return;
+    try{if('serviceWorker' in navigator&&navigator.serviceWorker.controller){
+      navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION',title,body});}
+    else{new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag:'zen-reminder'});}}catch{}};
+
+  // Check reminders every 30s
+  useEffect(()=>{
+    if(notifPerm!=='granted')return;
+    const check=()=>{const now=new Date();const hhmm=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const dateKey=getToday();
+      Object.entries(reminders).forEach(([key,r])=>{
+        if(!r.enabled)return;if(r.time!==hhmm)return;
+        const nKey=`${key}-${dateKey}`;if(lastNotifDate.current[nKey])return;
+        lastNotifDate.current[nKey]=true;
+        const todayTodos=todos.filter(t=>t.date===dateKey);
+        const pending=todayTodos.filter(t=>!t.done).length;
+        if(key==='morning'){fireNotification('🌅 Good Morning',pending>0?`You have ${pending} intention${pending!==1?'s':''} waiting.`:'Set your intentions for today.');}
+        else{const done=todayTodos.filter(t=>t.done).length;
+          fireNotification('🌙 Evening Reflection',done>0?`You completed ${done} of ${todayTodos.length} intentions today.`:'Take a moment to reflect on your day.');}});};
+    const id=setInterval(check,30000);check();return()=>clearInterval(id);
+  },[reminders,notifPerm,todos]);
+
   const today=getToday();
   const isToday=historyDate===today;
 
@@ -602,6 +684,33 @@ function App(){
               h('div',{className:'insight-item'},h('div',{className:'insight-num'},doneAll),h('div',{className:'insight-label'},'Completed')),
               h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${rateAll}%`),h('div',{className:'insight-label'},'Rate')),
               h('div',{className:'insight-item'},h('div',{className:'insight-num'},maxStrk),h('div',{className:'insight-label'},'Best Streak'))));})(),
+
+        // Reminder settings
+        h('div',{className:'reminder-card'},
+          h('div',{className:'reminder-header'},
+            h('div',{className:'reminder-title'},'Daily Reminders')),
+          h('div',{className:'reminder-sub'},'Gentle nudges to set intentions and reflect on your day.'),
+
+          notifPerm==='granted'?h('div',{className:'reminder-slots'},
+            Object.entries(reminders).map(([key,r])=>
+              h('div',{key,className:`reminder-slot ${r.enabled?'active':''}`},
+                h('div',{className:'reminder-slot-icon'},key==='morning'?'🌅':'🌙'),
+                h('div',{className:'reminder-slot-text'},
+                  h('div',{className:'reminder-slot-label'},r.label),
+                  h('div',{className:'reminder-slot-desc'},r.desc)),
+                r.enabled&&h('input',{type:'time',className:'time-picker-input',value:r.time,
+                  onClick:e=>e.stopPropagation(),onChange:e=>setReminderTime(key,e.target.value)}),
+                h('button',{className:`toggle-switch ${r.enabled?'on':''}`,onClick:()=>toggleReminder(key)},
+                  h('div',{className:'toggle-knob'})))))
+
+          :notifPerm==='denied'?h('div',{className:'notif-denied'},
+              'Notifications are blocked. Please enable them in your browser settings to use reminders.')
+
+          :notifPerm==='unsupported'?h('div',{className:'notif-denied'},
+              'Notifications are not supported in this browser.')
+
+          :h('button',{className:'notif-permission-btn',onClick:requestNotifPermission},
+              '🔔  Enable Notifications')),
 
         // Backup section
         h('div',{className:'data-card'},
