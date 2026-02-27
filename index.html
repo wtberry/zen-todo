@@ -273,4 +273,633 @@ body { min-height: 100%; overflow-x: hidden; font-family: var(--sans); color: va
 .insights-title { font-family: var(--serif); font-size: 17px; color: var(--text); margin-bottom: 14px; font-weight: 400; }
 .insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .insight-item { text-align: center; }
-.insight-num { font
+.insight-num { font-family: var(--serif); font-size: 22px; font-weight: 300; color: var(--text); letter-spacing: -0.02em; }
+.insight-label { font-size: 8px; letter-spacing: 0.8px; color: var(--text-muted); margin-top: 3px; text-transform: uppercase; }
+.insight-bar-row { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+.insight-bar-label { font-size: 10px; color: var(--text-muted); width: 28px; text-align: right; flex-shrink: 0; }
+.insight-bar-track { flex: 1; height: 6px; border-radius: 3px; background: rgba(0,0,0,0.03); overflow: hidden; }
+.insight-bar-fill { height: 100%; border-radius: 3px; transition: width 1s var(--ease-out); }
+.insight-bar-count { font-size: 10px; color: var(--text-faint); width: 24px; flex-shrink: 0; font-weight: 300; }
+
+/* === REMINDERS === */
+.reminder-card { padding: 20px; border-radius: 18px; background: var(--glass); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border);
+  margin-bottom: 16px; animation: fadeInUp 0.5s 0.16s var(--ease-out) both; box-shadow: var(--glass-shadow); }
+.reminder-header { margin-bottom: 4px; }
+.reminder-title { font-family: var(--serif); font-size: 17px; color: var(--text); font-weight: 400; }
+.reminder-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; font-weight: 300; }
+.reminder-slots { display: flex; flex-direction: column; gap: 8px; }
+.reminder-slot { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px;
+  border: 1.5px solid rgba(0,0,0,0.04); background: rgba(255,255,255,0.5); transition: all 0.3s var(--ease-out); }
+.reminder-slot.active { border-color: rgba(123,158,135,0.2); background: rgba(123,158,135,0.035); }
+.reminder-slot-icon { font-size: 16px; width: 34px; height: 34px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; background: var(--sage-light); }
+.reminder-slot-text { flex: 1; min-width: 0; }
+.reminder-slot-label { font-size: 12px; color: var(--text); font-weight: 500; }
+.reminder-slot-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+/* Toggle on RIGHT for thumb */
+.toggle-switch { width: 46px; height: 28px; border-radius: 14px; border: none; padding: 3px;
+  background: rgba(0,0,0,0.08); cursor: pointer; transition: all 0.35s var(--ease-out); flex-shrink: 0;
+  -webkit-appearance: none; }
+.toggle-switch.on { background: var(--sage); box-shadow: 0 0 6px rgba(123,158,135,0.15); }
+.toggle-knob { width: 22px; height: 22px; border-radius: 11px; background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.35s var(--ease-spring); pointer-events: none; }
+.toggle-switch.on .toggle-knob { transform: translateX(18px); }
+.time-picker-input { border: none; background: transparent; font-size: 13px; color: var(--text);
+  font-family: var(--sans); width: 70px; text-align: center; -webkit-appearance: none; }
+.time-picker-input:focus { outline: none; }
+.notif-permission-btn { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px dashed rgba(123,158,135,0.3);
+  background: var(--sage-faint); color: var(--sage-dark); font-size: 13px; font-family: var(--sans);
+  font-weight: 500; cursor: pointer; transition: all 0.3s var(--ease-spring); -webkit-appearance: none; }
+.notif-permission-btn:active { transform: scale(0.97); }
+.notif-denied { text-align: center; padding: 12px; border-radius: 12px; background: rgba(200,120,120,0.04);
+  font-size: 11px; color: #B07070; line-height: 1.5; font-weight: 300; }
+
+/* === DATA === */
+.data-card { padding: 20px; border-radius: 18px; background: var(--glass); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border);
+  margin-bottom: 16px; animation: fadeInUp 0.5s 0.24s var(--ease-out) both; box-shadow: var(--glass-shadow); }
+.data-title { font-family: var(--serif); font-size: 17px; color: var(--text); margin-bottom: 4px; font-weight: 400; }
+.data-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; font-weight: 300; }
+.data-actions { display: flex; flex-direction: column; gap: 8px; }
+.data-btn { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 14px;
+  border: 1.5px solid rgba(0,0,0,0.04); background: rgba(255,255,255,0.5); cursor: pointer;
+  transition: all 0.3s var(--ease-out); font-family: var(--sans); -webkit-appearance: none; text-align: left;
+  width: 100%; min-height: 48px; }
+.data-btn:active { transform: scale(0.98); background: rgba(255,255,255,0.8); }
+.data-btn-icon { font-size: 16px; width: 34px; height: 34px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; }
+.data-btn-icon.export { background: rgba(123,158,135,0.07); }
+.data-btn-icon.import { background: rgba(139,159,197,0.07); }
+.data-btn-icon.danger { background: rgba(200,120,120,0.05); }
+.data-btn-text { flex: 1; }
+.data-btn-label { font-size: 13px; color: var(--text); font-weight: 500; }
+.data-btn-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+.data-btn-arrow { color: var(--text-faint); font-size: 14px; }
+.file-input-hidden { display: none; }
+
+/* === TOAST === */
+.toast-container { position: fixed; top: calc(16px + var(--safe-top)); left: 50%; transform: translateX(-50%);
+  z-index: 1000; pointer-events: none; }
+.toast { padding: 12px 24px; border-radius: 14px; background: rgba(61,74,66,0.88);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  color: white; font-size: 13px; font-family: var(--sans); animation: toastIn 0.3s var(--ease-out);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12); pointer-events: auto; text-align: center; max-width: 280px; }
+.toast.success { background: rgba(74,93,82,0.88); }
+.toast.error { background: rgba(176,90,90,0.88); }
+.toast.exiting { animation: toastOut 0.3s var(--ease-out) forwards; }
+
+/* === MODAL === */
+.modal-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: flex-end; justify-content: center; padding: 0; animation: fadeIn 0.2s ease-out; }
+.modal-card { background: var(--bg1); border-radius: 24px 24px 0 0; padding: 28px 22px calc(28px + var(--safe-bottom));
+  max-width: 480px; width: 100%; box-shadow: 0 -16px 60px rgba(0,0,0,0.1);
+  animation: sheetUp 0.35s var(--ease-out); }
+.modal-title { font-family: var(--serif); font-size: 20px; color: var(--text); margin-bottom: 8px; font-weight: 400; }
+.modal-text { font-size: 13px; color: var(--text-soft); line-height: 1.6; margin-bottom: 20px; font-weight: 300; }
+.modal-actions { display: flex; gap: 10px; }
+.modal-btn { flex: 1; padding: 14px; border-radius: 14px; border: none; font-size: 13px;
+  font-family: var(--sans); font-weight: 500; cursor: pointer; -webkit-appearance: none;
+  transition: all 0.25s var(--ease-spring); min-height: 48px; }
+.modal-btn.cancel { background: rgba(0,0,0,0.045); color: var(--text-soft); }
+.modal-btn.confirm { background: var(--sage); color: white; box-shadow: 0 2px 6px rgba(123,158,135,0.18); }
+.modal-btn.danger { background: #C07070; color: white; box-shadow: 0 2px 6px rgba(192,112,112,0.18); }
+.modal-btn:active { transform: scale(0.96); }
+.modal-import-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.modal-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px;
+  border: 1.5px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.55); cursor: pointer;
+  transition: all 0.3s var(--ease-out); -webkit-appearance: none; text-align: left; width: 100%;
+  font-family: var(--sans); min-height: 48px; }
+.modal-option:active { transform: scale(0.98); }
+.modal-option.selected { border-color: var(--sage); background: var(--sage-faint); }
+.modal-option-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.1);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.modal-option.selected .modal-option-radio { border-color: var(--sage); }
+.modal-option.selected .modal-option-radio::after { content: ''; width: 10px; height: 10px;
+  border-radius: 50%; background: var(--sage); animation: checkPop 0.3s var(--ease-spring); }
+.modal-option-text { flex: 1; }
+.modal-option-label { font-size: 13px; color: var(--text); font-weight: 500; }
+.modal-option-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+
+/* === LEVEL UP === */
+.levelup-overlay { position: fixed; inset: 0; z-index: 950; display: flex; align-items: center;
+  justify-content: center; pointer-events: none; animation: fadeIn 0.3s ease-out; }
+.levelup-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(24px);
+  border-radius: 24px; padding: 32px 28px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1); animation: fadeInUp 0.5s var(--ease-spring); max-width: 260px; }
+.levelup-icon { font-size: 44px; margin-bottom: 10px; animation: levelUpPop 0.8s 0.2s var(--ease-spring) both; }
+.levelup-title { font-family: var(--serif); font-size: 18px; color: var(--text); font-weight: 400; margin-bottom: 2px; }
+.levelup-name { font-family: var(--serif); font-size: 24px; color: var(--sage); font-weight: 300; }
+.levelup-sub { font-size: 11px; color: var(--text-muted); margin-top: 8px; font-weight: 300; }
+
+/* XP float */
+.xp-toast { display: inline-block; font-size: 13px; font-weight: 500; color: var(--sage);
+  animation: xpFloat 1.2s var(--ease-out) forwards; position: fixed; z-index: 800; pointer-events: none; }
+
+/* INSTALL */
+.install-banner { position: fixed; bottom: calc(var(--nav-h) + var(--safe-bottom)); left: 0; right: 0; z-index: 99;
+  padding: 14px 18px; background: rgba(255,255,255,0.9); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border-top: 1px solid rgba(0,0,0,0.04);
+  display: flex; align-items: center; gap: 12px; animation: fadeInUp 0.5s var(--ease-out); }
+.install-banner.hidden { display: none; }
+.install-text { flex: 1; }
+.install-title { font-size: 12px; font-weight: 500; color: var(--text); }
+.install-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }
+.install-btn { padding: 9px 16px; border-radius: 10px; border: none; background: var(--sage); color: white;
+  font-size: 11px; font-family: var(--sans); font-weight: 500; cursor: pointer; -webkit-appearance: none; }
+.install-dismiss { background: none; border: none; color: var(--text-faint); font-size: 16px; cursor: pointer; padding: 4px; -webkit-appearance: none; }
+
+.footer-orb { display: none; } /* hidden, bottom nav replaces */
+
+::-webkit-scrollbar { width: 0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>window.onerror=function(m,s,l,c,e){document.getElementById('app').innerHTML='<div style="padding:20px;color:red;font-family:monospace;white-space:pre-wrap"><h2>Error</h2>'+m+'<br>'+s+':'+l+':'+c+'</div>';}</script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.development.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.development.js"></script>
+<script>
+try {
+const {useState,useEffect,useRef,useCallback,useMemo,createElement:h,Fragment}=React;
+
+const CATS=[{id:'mind',label:'Mind',icon:'◯',color:'#7B9E87'},{id:'body',label:'Body',icon:'△',color:'#C4956A'},{id:'work',label:'Work',icon:'□',color:'#8B9FC5'},{id:'soul',label:'Soul',icon:'◇',color:'#B8A0C8'}];
+const AFFS=["Small steps compound into transformation.","You showed up today. That matters.","Progress, not perfection.","Each task completed is a promise kept to yourself.","The river doesn't rush. It arrives.","You are building the life you want.","Consistency is quiet power.","Rest is part of the rhythm.","Your only competition is who you were yesterday.","What you do today is shaping tomorrow.","Breathe. Begin. Believe.","Discipline is choosing what you want most over what you want now."];
+const CELEB=['✦','❋','✧','⟡','◈','✺','⊹','⋆'];
+const DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const LEVELS=[
+  {xp:0,icon:'🫘',name:'Seed',desc:'Every journey begins here'},
+  {xp:50,icon:'🌱',name:'Sprout',desc:'Breaking through the surface'},
+  {xp:150,icon:'🪴',name:'Seedling',desc:'Roots growing deeper'},
+  {xp:300,icon:'🌿',name:'Young Plant',desc:'Reaching for the light'},
+  {xp:500,icon:'🌳',name:'Tree',desc:'Standing tall and steady'},
+  {xp:800,icon:'🏔️',name:'Grove',desc:'Your habits form a sanctuary'},
+  {xp:1200,icon:'🌲',name:'Ancient Forest',desc:'Wisdom in every ring'},
+  {xp:2000,icon:'✦',name:'Transcendent',desc:'Beyond the forest, starlight'}
+];
+const XP_PER_TASK=10;const XP_ALL_DONE_BONUS=25;const XP_STREAK_BONUS=5;
+const getLevel=xp=>{let lvl=LEVELS[0];for(const l of LEVELS){if(xp>=l.xp)lvl=l;else break;}return lvl;};
+const getLevelIndex=xp=>LEVELS.reduce((acc,l,i)=>xp>=l.xp?i:acc,0);
+const getNextLevel=xp=>{const i=getLevelIndex(xp);return i<LEVELS.length-1?LEVELS[i+1]:null;};
+const getLevelProgress=xp=>{const cur=getLevel(xp);const next=getNextLevel(xp);
+  if(!next)return 1;return(xp-cur.xp)/(next.xp-cur.xp);};
+
+const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dd}`;};
+const getToday=()=>fmt(new Date());
+const parseDate=s=>{const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);};
+const addDays=(s,n)=>{const d=parseDate(s);d.setDate(d.getDate()+n);return fmt(d);};
+const isSameDay=(a,b)=>a===b;
+const load=()=>{try{return JSON.parse(localStorage.getItem('zen-todo')||'null')}catch{return null}};
+const save=d=>{try{localStorage.setItem('zen-todo',JSON.stringify(d))}catch{}};
+
+function getWeekDays(dateStr){const d=parseDate(dateStr);const day=d.getDay();const mon=new Date(d);mon.setDate(d.getDate()-day);
+  return Array.from({length:7},(_,i)=>{const dd=new Date(mon);dd.setDate(mon.getDate()+i);return fmt(dd);});}
+
+function Particles(){return h(Fragment,null,Array.from({length:8},(_,i)=>h('div',{key:i,className:'particle',style:{left:`${10+i*11}%`,animationDelay:`${i*2}s`}})));}
+function Celebration({onDone}){useEffect(()=>{const t=setTimeout(onDone,1800);return()=>clearTimeout(t)},[]);
+  return h('div',{className:'celebration'},Array.from({length:8},(_,i)=>h('span',{key:i,style:{animationDelay:`${i*.07}s`,color:CATS[i%4].color,transform:`rotate(${i*45}deg) translateY(-60px)`}},CELEB[i])));}
+
+function ProgressRing({completed,total}){const p=total===0?0:completed/total,r=30,c=2*Math.PI*r;
+  return h('div',{className:'progress-ring'},h('svg',{width:72,height:72},h('circle',{cx:36,cy:36,r,fill:'none',stroke:'rgba(123,158,135,0.1)',strokeWidth:2.5}),
+    h('circle',{cx:36,cy:36,r,fill:'none',stroke:'#7B9E87',strokeWidth:2.5,strokeDasharray:c,strokeDashoffset:c*(1-p),strokeLinecap:'round',style:{transition:'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)'}})),
+    h('div',{className:'count'},h('span',{className:'num'},completed),h('span',{className:'label'},`of ${total}`)));}
+
+// TodoItem: cat dot + text on LEFT, checkbox on RIGHT
+function TodoItem({todo,onToggle,onDelete,readonly}){
+  const cat=CATS.find(c=>c.id===todo.category)||CATS[0];
+  const startX=useRef(0),currentX=useRef(0),elRef=useRef(null);
+  const[showDel,setShowDel]=useState(false);
+  const onTS=e=>{if(readonly)return;startX.current=e.touches[0].clientX;currentX.current=0;elRef.current?.classList.add('swiping');};
+  const onTM=e=>{if(readonly)return;const dx=e.touches[0].clientX-startX.current;currentX.current=dx;
+    if(dx<-20&&elRef.current){elRef.current.style.transform=`translateX(${Math.max(dx,-100)}px)`;setShowDel(dx<-50);}};
+  const onTE=()=>{if(readonly)return;if(elRef.current){elRef.current.classList.remove('swiping');
+    if(currentX.current<-80){elRef.current.classList.add('removing');setTimeout(()=>onDelete(todo.id),350);}
+    else{elRef.current.style.transform='';setShowDel(false);}}};
+  return h('div',{ref:elRef,className:`todo-item ${todo.done?'done':''} ${showDel?'show-delete':''} ${readonly?'readonly':''}`,
+    style:{'--cat-color':cat.color},onClick:()=>!readonly&&onToggle(todo.id),onTouchStart:onTS,onTouchMove:onTM,onTouchEnd:onTE},
+    h('div',{className:'todo-cat-dot',style:{background:cat.color}}),
+    h('span',{className:'todo-text'},todo.text),
+    h('div',{className:'checkbox'},todo.done&&h('svg',{width:14,height:14,viewBox:'0 0 12 12',fill:'none'},
+      h('path',{d:'M2.5 6L5 8.5L9.5 3.5',stroke:'white',strokeWidth:1.5,strokeLinecap:'round',strokeLinejoin:'round'}))),
+    !readonly&&h('span',{className:'delete-hint'},'← delete'));}
+
+function WeekStrip({selectedDate,onSelect,todos}){
+  const days=getWeekDays(selectedDate);const today=getToday();
+  return h('div',{className:'week-strip'},days.map(d=>{
+    const dayTodos=todos.filter(t=>t.date===d);const done=dayTodos.filter(t=>t.done).length;
+    const total=dayTodos.length;const dt=parseDate(d);
+    let dotClass='empty';if(total>0){dotClass=done===total?'all-done':'partial';}
+    return h('button',{key:d,className:`week-day ${d===selectedDate?'selected':''} ${d===today?'today':''}`,
+      onClick:()=>onSelect(d)},
+      h('span',{className:'week-day-name'},DAYNAMES[dt.getDay()]),
+      h('span',{className:'week-day-num'},dt.getDate()),
+      h('div',{className:`week-day-dot ${dotClass}`}));}));}
+
+function InsightsCard({todos}){
+  const today=getToday();const days7=Array.from({length:7},(_,i)=>addDays(today,-i));
+  const week=todos.filter(t=>days7.includes(t.date));
+  const done7=week.filter(t=>t.done).length,total7=week.length;
+  const rate7=total7?Math.round(done7/total7*100):0;
+  const daysActive=new Set(week.map(t=>t.date)).size;
+  const catCounts=CATS.map(cat=>{const c=week.filter(t=>t.category===cat.id);return{...cat,total:c.length,done:c.filter(t=>t.done).length};});
+  const maxCat=Math.max(...catCounts.map(c=>c.total),1);
+  return h('div',{className:'insights-card'},
+    h('div',{className:'insights-title'},'This Week'),
+    h('div',{className:'insights-grid'},
+      h('div',{className:'insight-item'},h('div',{className:'insight-num'},done7),h('div',{className:'insight-label'},'Done')),
+      h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${rate7}%`),h('div',{className:'insight-label'},'Rate')),
+      h('div',{className:'insight-item'},h('div',{className:'insight-num'},daysActive),h('div',{className:'insight-label'},'Active Days'))),
+    catCounts.map(cat=>h('div',{key:cat.id,className:'insight-bar-row'},
+      h('span',{className:'insight-bar-label',style:{color:cat.color}},cat.icon),
+      h('div',{className:'insight-bar-track'},h('div',{className:'insight-bar-fill',style:{width:`${(cat.total/maxCat)*100}%`,background:cat.color}})),
+      h('span',{className:'insight-bar-count'},`${cat.done}/${cat.total}`))));}
+
+function Toast({message,type,onDone}){useEffect(()=>{const t=setTimeout(onDone,2500);return()=>clearTimeout(t)},[]);
+  const[exiting,setExiting]=useState(false);useEffect(()=>{const t=setTimeout(()=>setExiting(true),2200);return()=>clearTimeout(t)},[]);
+  return h('div',{className:'toast-container'},h('div',{className:`toast ${type} ${exiting?'exiting':''}`},message));}
+
+function ConfirmModal({title,text,confirmLabel,confirmClass,onConfirm,onCancel}){
+  return h('div',{className:'modal-overlay',onClick:onCancel},
+    h('div',{className:'modal-card',onClick:e=>e.stopPropagation()},
+      h('div',{className:'modal-title'},title),h('div',{className:'modal-text'},text),
+      h('div',{className:'modal-actions'},
+        h('button',{className:'modal-btn cancel',onClick:onCancel},'Cancel'),
+        h('button',{className:`modal-btn ${confirmClass||'confirm'}`,onClick:onConfirm},confirmLabel||'Confirm'))));}
+
+function ImportModal({onImport,onCancel,fileData}){
+  const[mode,setMode]=useState('merge');
+  const counts=useMemo(()=>{if(!fileData)return null;try{const d=JSON.parse(fileData);return{todos:d.todos?.length||0};}catch{return null;}},[fileData]);
+  if(!counts)return h(ConfirmModal,{title:'Import Error',text:'This file doesn\'t contain valid Zen Todo data.',confirmLabel:'OK',onConfirm:onCancel,onCancel});
+  return h('div',{className:'modal-overlay',onClick:onCancel},
+    h('div',{className:'modal-card',onClick:e=>e.stopPropagation()},
+      h('div',{className:'modal-title'},'Import Data'),
+      h('div',{className:'modal-text'},`Found ${counts.todos} intention${counts.todos!==1?'s':''} in backup file.`),
+      h('div',{className:'modal-import-options'},
+        h('button',{className:`modal-option ${mode==='merge'?'selected':''}`,onClick:()=>setMode('merge')},
+          h('div',{className:'modal-option-radio'}),
+          h('div',{className:'modal-option-text'},h('div',{className:'modal-option-label'},'Merge'),
+            h('div',{className:'modal-option-desc'},'Add imported data alongside existing'))),
+        h('button',{className:`modal-option ${mode==='replace'?'selected':''}`,onClick:()=>setMode('replace')},
+          h('div',{className:'modal-option-radio'}),
+          h('div',{className:'modal-option-text'},h('div',{className:'modal-option-label'},'Replace'),
+            h('div',{className:'modal-option-desc'},'Overwrite all current data')))),
+      h('div',{className:'modal-actions'},
+        h('button',{className:'modal-btn cancel',onClick:onCancel},'Cancel'),
+        h('button',{className:'modal-btn confirm',onClick:()=>onImport(mode)},'Import'))));}
+
+// MAIN APP
+function App(){
+  const stored=load();
+  const[todos,setTodos]=useState(stored?.todos||[]);
+  const[input,setInput]=useState('');
+  const[selectedCat,setSelectedCat]=useState('mind');
+  const[streak,setStreak]=useState(stored?.streak||0);
+  const[lastComplete,setLastComplete]=useState(stored?.lastComplete||null);
+  const[showCelebration,setShowCelebration]=useState(false);
+  const[xp,setXp]=useState(stored?.xp||0);
+  const[showLevelUp,setShowLevelUp]=useState(null);
+  const[xpFloats,setXpFloats]=useState([]);
+  const prevLevelRef=useRef(getLevelIndex(stored?.xp||0));
+  const[filter,setFilter]=useState('all');
+  const[view,setView]=useState('today');
+  const[historyDate,setHistoryDate]=useState(getToday());
+  const[affirmation]=useState(()=>AFFS[Math.floor(Math.random()*AFFS.length)]);
+  const[deferredPrompt,setDeferredPrompt]=useState(null);
+  const[showInstall,setShowInstall]=useState(false);
+  const[toast,setToast]=useState(null);
+  const[modal,setModal]=useState(null);
+  const[showSheet,setShowSheet]=useState(false); // bottom sheet for input
+  const inputRef=useRef(null);
+  const fileInputRef=useRef(null);
+
+  const showToast=(message,type='success')=>{setToast({message,type,key:Date.now()});};
+
+  const exportData=()=>{
+    const data={version:1,exportedAt:new Date().toISOString(),todos,streak,lastComplete,xp};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download=`zen-todo-backup-${getToday()}.json`;document.body.appendChild(a);
+    a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    showToast('Backup exported ✦');};
+
+  const handleFileSelect=e=>{const file=e.target.files?.[0];if(!file)return;
+    const reader=new FileReader();reader.onload=ev=>{setModal({type:'import',data:ev.target.result});};
+    reader.readAsText(file);e.target.value='';};
+  const doImport=(mode)=>{
+    try{const d=JSON.parse(modal.data);if(!d.todos||!Array.isArray(d.todos))throw new Error('invalid');
+      if(mode==='replace'){setTodos(d.todos);setStreak(d.streak||0);setLastComplete(d.lastComplete||null);setXp(d.xp||0);
+        showToast(`Replaced with ${d.todos.length} intentions`);}
+      else{const existingIds=new Set(todos.map(t=>t.id));const newTodos=d.todos.filter(t=>!existingIds.has(t.id));
+        setTodos(p=>[...p,...newTodos]);showToast(`Added ${newTodos.length} new intention${newTodos.length!==1?'s':''}`);}
+    }catch{showToast('Import failed — invalid file','error');}
+    setModal(null);};
+
+  const doClearAll=()=>{setTodos([]);setStreak(0);setLastComplete(null);setXp(0);setModal(null);showToast('All data cleared');};
+
+  // Notifications
+  const loadReminders=()=>{try{return JSON.parse(localStorage.getItem('zen-reminders')||'null')}catch{return null}};
+  const saveReminders=r=>{try{localStorage.setItem('zen-reminders',JSON.stringify(r))}catch{}};
+  const defaultReminders={morning:{enabled:false,time:'08:00',label:'Morning Intention',desc:'Plan your day'},
+    evening:{enabled:false,time:'21:00',label:'Evening Reflection',desc:'Review your progress'}};
+  const[reminders,setReminders]=useState(()=>loadReminders()||defaultReminders);
+  const[notifPerm,setNotifPerm]=useState(()=>'Notification' in window?Notification.permission:'unsupported');
+  const lastNotifDate=useRef({});
+
+  useEffect(()=>{saveReminders(reminders)},[reminders]);
+
+  const requestNotifPermission=async()=>{
+    if(!('Notification' in window)){showToast('Notifications not supported','error');return;}
+    const p=await Notification.requestPermission();setNotifPerm(p);
+    if(p==='granted')showToast('Notifications enabled ✦');
+    else if(p==='denied')showToast('Notifications blocked by browser','error');};
+
+  const toggleReminder=(key)=>{setReminders(r=>({...r,[key]:{...r[key],enabled:!r[key].enabled}}));};
+  const setReminderTime=(key,time)=>{setReminders(r=>({...r,[key]:{...r[key],time}}));};
+
+  const fireNotification=(title,body)=>{
+    if(notifPerm!=='granted')return;
+    try{if('serviceWorker' in navigator&&navigator.serviceWorker.controller){
+      navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION',title,body});}
+    else{new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag:'zen-reminder'});}}catch{}};
+
+  useEffect(()=>{
+    if(notifPerm!=='granted')return;
+    const check=()=>{const now=new Date();const hhmm=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const dateKey=getToday();
+      Object.entries(reminders).forEach(([key,r])=>{
+        if(!r.enabled)return;if(r.time!==hhmm)return;
+        const nKey=`${key}-${dateKey}`;if(lastNotifDate.current[nKey])return;
+        lastNotifDate.current[nKey]=true;
+        const todayTodos=todos.filter(t=>t.date===dateKey);
+        const pending=todayTodos.filter(t=>!t.done).length;
+        if(key==='morning'){fireNotification('🌅 Good Morning',pending>0?`You have ${pending} intention${pending!==1?'s':''} waiting.`:'Set your intentions for today.');}
+        else{const done=todayTodos.filter(t=>t.done).length;
+          fireNotification('🌙 Evening Reflection',done>0?`You completed ${done} of ${todayTodos.length} intentions today.`:'Take a moment to reflect on your day.');}});};
+    const id=setInterval(check,30000);check();return()=>clearInterval(id);
+  },[reminders,notifPerm,todos]);
+
+  const today=getToday();
+
+  useEffect(()=>{save({todos,streak,lastComplete,xp})},[todos,streak,lastComplete,xp]);
+
+  useEffect(()=>{const todayTodos=todos.filter(t=>t.date===today);
+    const allDone=todayTodos.length>0&&todayTodos.every(t=>t.done);
+    if(allDone&&lastComplete!==today){const y=new Date();y.setDate(y.getDate()-1);const yStr=fmt(y);
+      setStreak(s=>lastComplete===yStr?s+1:1);setLastComplete(today);setShowCelebration(true);}
+  },[todos]);
+
+  useEffect(()=>{const h=e=>{e.preventDefault();setDeferredPrompt(e);setShowInstall(true)};
+    window.addEventListener('beforeinstallprompt',h);return()=>window.removeEventListener('beforeinstallprompt',h)},[]);
+  const installApp=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;setDeferredPrompt(null);setShowInstall(false);};
+
+  // Focus input when sheet opens
+  useEffect(()=>{if(showSheet)setTimeout(()=>inputRef.current?.focus(),100);},[showSheet]);
+
+  const addTodo=useCallback(()=>{const text=input.trim();if(!text)return;
+    setTodos(p=>[...p,{id:Date.now().toString(),text,category:selectedCat,done:false,date:today}]);
+    setInput('');inputRef.current?.focus();},[input,selectedCat]);
+  const toggleTodo=useCallback(id=>{
+    setTodos(p=>{const updated=p.map(t=>t.id===id?{...t,done:!t.done}:t);
+      const toggled=updated.find(t=>t.id===id);
+      if(toggled&&toggled.done){
+        let gain=XP_PER_TASK;if(streak>0)gain+=XP_STREAK_BONUS;
+        const todayItems=updated.filter(t=>t.date===getToday());
+        const allDoneNow=todayItems.length>0&&todayItems.every(t=>t.done);
+        if(allDoneNow)gain+=XP_ALL_DONE_BONUS;
+        setXp(prev=>{const next=prev+gain;
+          const oldLvl=getLevelIndex(prev);const newLvl=getLevelIndex(next);
+          if(newLvl>oldLvl){setTimeout(()=>{setShowLevelUp(LEVELS[newLvl]);
+            setTimeout(()=>setShowLevelUp(null),3000);},400);}
+          return next;});
+        setXpFloats(f=>[...f,{id:Date.now(),amount:gain}]);
+        setTimeout(()=>setXpFloats(f=>f.slice(1)),1500);
+      }
+      return updated;});},[streak]);
+  const deleteTodo=useCallback(id=>{setTodos(p=>p.filter(t=>t.id!==id))},[]);
+
+  const viewDate=view==='today'?today:historyDate;
+  const dayTodos=todos.filter(t=>t.date===viewDate);
+  const completed=dayTodos.filter(t=>t.done).length;
+  const total=dayTodos.length;
+  const filtered=filter==='all'?dayTodos:filter==='active'?dayTodos.filter(t=>!t.done):dayTodos.filter(t=>t.done);
+
+  const now=new Date();
+  const greeting=now.getHours()<12?'Good morning':now.getHours()<17?'Good afternoon':'Good evening';
+  const dateStr=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const curLevel=getLevel(xp);const nextLevel=getNextLevel(xp);const lvlProgress=getLevelProgress(xp);
+
+  const histDateObj=parseDate(historyDate);
+  const histDateLabel=histDateObj.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const canGoForward=historyDate<today;
+
+  return h('div',{className:'app'},
+    h(Particles),h('div',{className:'blob blob-1'}),h('div',{className:'blob blob-2'}),
+    showCelebration&&h(Celebration,{onDone:()=>setShowCelebration(false)}),
+
+    h('div',{className:'container'},
+
+      // === TODAY VIEW ===
+      view==='today'&&h(Fragment,null,
+        // v2-style header
+        h('div',{className:'header'},
+          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
+            h('div',null,h('p',{className:'date-label'},dateStr),h('h1',{className:'greeting'},greeting)),
+            h('div',{className:`streak-badge ${streak>0?'':'empty'}`},
+              h('span',{className:'streak-icon'},curLevel.icon),h('span',null,`${streak} day${streak!==1?'s':''}`))),
+          h('p',{className:'affirmation'},`"${affirmation}"`)),
+
+        // v2-style growth card
+        h('div',{className:'growth-card'},
+          h('div',{className:'growth-top'},
+            h('div',{className:'growth-icon-wrap'},
+              h('span',{className:`growth-icon ${showLevelUp?'leveling':''}`},curLevel.icon),
+              h('div',{className:'growth-glow',style:{background:curLevel===LEVELS[LEVELS.length-1]?'gold':'var(--sage)'}})),
+            h('div',{className:'growth-info'},
+              h('div',{className:'growth-level'},curLevel.name),
+              h('div',{className:'growth-sublevel'},nextLevel?`${xp - curLevel.xp} / ${nextLevel.xp - curLevel.xp} XP to ${nextLevel.name}`:`${xp} XP · Max Level`))),
+          h('div',{className:'growth-xp-row'},
+            h('div',{className:'growth-xp-track'},
+              h('div',{className:'growth-xp-fill',style:{width:`${lvlProgress*100}%`}})),
+            h('div',{className:'growth-xp-label'},`${xp} XP`))),
+
+        h('div',{className:'progress-card'},h(ProgressRing,{completed,total}),
+          h('div',{className:'progress-info'},
+            h('p',{className:'progress-status'},total===0?'Set your intentions for today':completed===total&&total>0?'All intentions fulfilled ✦':`${total-completed} intention${total-completed!==1?'s':''} remaining`),
+            h('div',{className:'cat-pills'},CATS.map(cat=>{const count=dayTodos.filter(t=>t.category===cat.id&&!t.done).length;
+              if(!count)return null;return h('div',{key:cat.id,className:'cat-pill',style:{color:cat.color}},
+                h('div',{className:'cat-pill-dot',style:{background:cat.color}}),h('span',null,count));})))),
+
+        // Filters (right-aligned)
+        total>0&&h('div',{className:'filters'},['all','active','done'].map(f=>
+          h('button',{key:f,className:`filter-btn ${filter===f?'active':''}`,onClick:()=>setFilter(f)},f))),
+
+        // Todo list
+        h('div',{className:'todo-list'},filtered.map((todo,i)=>
+          h('div',{key:todo.id,style:{animationDelay:`${i*.04}s`}},
+            h(TodoItem,{todo,onToggle:toggleTodo,onDelete:deleteTodo})))),
+
+        total===0&&h('div',{className:'empty-state'},h('div',{className:'empty-icon'},'◯'),
+          h('p',{className:'empty-title'},'Begin with one small intention'),
+          h('p',{className:'empty-sub'},'Tap + to add')),
+
+        total>0&&completed===total&&h('div',{className:'completion-card'},
+          h('p',{className:'completion-title'},'All intentions fulfilled'),
+          h('p',{className:'completion-sub'},'You honored your commitments today.'))),
+
+      // === HISTORY VIEW ===
+      view==='history'&&h(Fragment,null,
+        h('div',{className:'date-nav'},
+          h('button',{className:'date-nav-btn sm',onClick:()=>setHistoryDate(d=>addDays(d,-7))},'‹‹'),
+          h('button',{className:'date-nav-btn sm',onClick:()=>setHistoryDate(d=>addDays(d,-1))},'‹'),
+          h('div',{className:'date-nav-label'},isSameDay(historyDate,today)?'Today':histDateLabel),
+          h('button',{className:'date-nav-btn lg',disabled:!canGoForward,onClick:()=>setHistoryDate(d=>addDays(d,1))},'›'),
+          h('button',{className:'date-nav-btn lg',disabled:!canGoForward,onClick:()=>{
+            const next=addDays(historyDate,7);setHistoryDate(next>today?today:next);}},'››')),
+
+        h(WeekStrip,{selectedDate:historyDate,onSelect:setHistoryDate,todos}),
+
+        dayTodos.length>0&&h(Fragment,null,
+          h('div',{className:'past-day-header'},
+            h('div',{className:'past-day-title'},`${completed} of ${total} fulfilled`),
+            h('div',{className:'past-day-sub'},total>0?`${Math.round(completed/total*100)}%`:'')),
+          h('div',{className:'todo-list'},dayTodos.map((todo,i)=>
+            h('div',{key:todo.id,style:{animationDelay:`${i*.04}s`}},
+              h(TodoItem,{todo,onToggle:toggleTodo,onDelete:deleteTodo,readonly:!isSameDay(historyDate,today)}))))),
+
+        dayTodos.length===0&&h('div',{className:'empty-state'},
+          h('div',{className:'empty-icon'},'◯'),
+          h('p',{className:'empty-title'},isSameDay(historyDate,today)?'No intentions set yet':'A day of rest, perhaps'),
+          h('p',{className:'empty-sub'},'No intentions recorded'))),
+
+      // === INSIGHTS VIEW ===
+      view==='insights'&&h(Fragment,null,
+        h('div',{className:'header',style:{marginBottom:16}},
+          h('h1',{className:'greeting',style:{fontSize:22}},'Your Journey')),
+        h(InsightsCard,{todos}),
+
+        (()=>{const allDates=[...new Set(todos.map(t=>t.date))].sort();
+          const totalAll=todos.length,doneAll=todos.filter(t=>t.done).length;
+          const rateAll=totalAll?Math.round(doneAll/totalAll*100):0;
+          let maxStrk=0,curStrk=0,prev=null;
+          allDates.forEach(d=>{const dt=todos.filter(t=>t.date===d);const allD=dt.length>0&&dt.every(t=>t.done);
+            if(allD){if(prev&&addDays(prev,1)===d){curStrk++}else{curStrk=1}maxStrk=Math.max(maxStrk,curStrk);prev=d;}
+            else{curStrk=0;prev=null;}});
+          return h('div',{className:'insights-card'},
+            h('div',{className:'insights-title'},'All Time'),
+            h('div',{className:'insights-grid'},
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},doneAll),h('div',{className:'insight-label'},'Completed')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${rateAll}%`),h('div',{className:'insight-label'},'Rate')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},maxStrk),h('div',{className:'insight-label'},'Best Streak')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},`${curLevel.icon}`),h('div',{className:'insight-label'},curLevel.name)),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},xp),h('div',{className:'insight-label'},'Total XP')),
+              h('div',{className:'insight-item'},h('div',{className:'insight-num'},getLevelIndex(xp)+1),h('div',{className:'insight-label'},`of ${LEVELS.length}`))));})(),
+
+        h('div',{className:'reminder-card'},
+          h('div',{className:'reminder-header'},
+            h('div',{className:'reminder-title'},'Daily Reminders')),
+          h('div',{className:'reminder-sub'},'Gentle nudges to set intentions and reflect.'),
+          notifPerm==='granted'?h('div',{className:'reminder-slots'},
+            Object.entries(reminders).map(([key,r])=>
+              h('div',{key,className:`reminder-slot ${r.enabled?'active':''}`},
+                h('div',{className:'reminder-slot-icon'},key==='morning'?'🌅':'🌙'),
+                h('div',{className:'reminder-slot-text'},
+                  h('div',{className:'reminder-slot-label'},r.label),
+                  h('div',{className:'reminder-slot-desc'},r.desc)),
+                r.enabled&&h('input',{type:'time',className:'time-picker-input',value:r.time,
+                  onClick:e=>e.stopPropagation(),onChange:e=>setReminderTime(key,e.target.value)}),
+                h('button',{className:`toggle-switch ${r.enabled?'on':''}`,onClick:()=>toggleReminder(key)},
+                  h('div',{className:'toggle-knob'})))))
+          :notifPerm==='denied'?h('div',{className:'notif-denied'},'Notifications blocked. Enable in browser settings.')
+          :notifPerm==='unsupported'?h('div',{className:'notif-denied'},'Notifications not supported.')
+          :h('button',{className:'notif-permission-btn',onClick:requestNotifPermission},'🔔  Enable Notifications')),
+
+        h('div',{className:'data-card'},
+          h('div',{className:'data-title'},'Your Data'),
+          h('div',{className:'data-sub'},'All data lives on your device.'),
+          h('input',{ref:fileInputRef,type:'file',accept:'.json',className:'file-input-hidden',onChange:handleFileSelect}),
+          h('div',{className:'data-actions'},
+            h('button',{className:'data-btn',onClick:exportData},
+              h('div',{className:'data-btn-icon export'},'↓'),
+              h('div',{className:'data-btn-text'},h('div',{className:'data-btn-label'},'Export Backup'),
+                h('div',{className:'data-btn-desc'},`${todos.length} intentions · JSON`)),
+              h('span',{className:'data-btn-arrow'},'›')),
+            h('button',{className:'data-btn',onClick:()=>fileInputRef.current?.click()},
+              h('div',{className:'data-btn-icon import'},'↑'),
+              h('div',{className:'data-btn-text'},h('div',{className:'data-btn-label'},'Import Backup'),
+                h('div',{className:'data-btn-desc'},'Merge or replace')),
+              h('span',{className:'data-btn-arrow'},'›')),
+            h('button',{className:'data-btn',onClick:()=>setModal({type:'clearConfirm'})},
+              h('div',{className:'data-btn-icon danger'},'✕'),
+              h('div',{className:'data-btn-text'},h('div',{className:'data-btn-label',style:{color:'#B07070'}},'Clear All Data'),
+                h('div',{className:'data-btn-desc'},'Remove everything')),
+              h('span',{className:'data-btn-arrow'},'›')))))),
+
+    // === BOTTOM NAV (fixed) ===
+    h('nav',{className:'bottom-nav'},
+      h('button',{className:`bottom-nav-btn ${view==='today'?'active':''}`,
+        onClick:()=>{setView('today');setFilter('all');}},
+        h('span',{className:'bottom-nav-icon'},'◎'),h('span',null,'Today')),
+      h('button',{className:`bottom-nav-btn ${view==='history'?'active':''}`,
+        onClick:()=>{setView('history');setHistoryDate(today);setFilter('all');}},
+        h('span',{className:'bottom-nav-icon'},'◷'),h('span',null,'History')),
+      h('button',{className:`bottom-nav-btn ${view==='insights'?'active':''}`,
+        onClick:()=>setView('insights')},
+        h('span',{className:'bottom-nav-icon'},'✦'),h('span',null,'Insights'))),
+
+    // === FAB (Today view only) ===
+    view==='today'&&h('button',{className:`fab ${showSheet?'open':''}`,
+      onClick:()=>setShowSheet(s=>!s)},'+'),
+
+    // === BOTTOM SHEET ===
+    showSheet&&h(Fragment,null,
+      h('div',{className:'sheet-overlay',onClick:()=>setShowSheet(false)}),
+      h('div',{className:'sheet'},
+        h('div',{className:'sheet-handle'}),
+        h('div',{className:'sheet-cat-row'},CATS.map(cat=>h('button',{key:cat.id,
+          className:`sheet-cat-btn ${selectedCat===cat.id?'active':''}`,style:{'--cat-color':cat.color},
+          onClick:()=>setSelectedCat(cat.id)},cat.icon+' '+cat.label))),
+        h('div',{className:'sheet-input-row'},
+          h('input',{ref:inputRef,className:'sheet-input',value:input,onChange:e=>setInput(e.target.value),
+            onKeyDown:e=>{if(e.key==='Enter'){addTodo();/* keep sheet open */}},
+            placeholder:'Set an intention…',enterKeyHint:'done'}),
+          h('button',{className:'sheet-add-btn',onClick:addTodo},'Add')))),
+
+    // Install
+    showInstall&&h('div',{className:'install-banner'},
+      h('div',{className:'install-text'},h('div',{className:'install-title'},'Install Zen Todo'),
+        h('div',{className:'install-sub'},'Add to home screen')),
+      h('button',{className:'install-btn',onClick:installApp},'Install'),
+      h('button',{className:'install-dismiss',onClick:()=>setShowInstall(false)},'×')),
+
+    // Toast
+    toast&&h(Toast,{key:toast.key,message:toast.message,type:toast.type,onDone:()=>setToast(null)}),
+
+    // Modals
+    modal?.type==='import'&&h(ImportModal,{fileData:modal.data,onImport:doImport,onCancel:()=>setModal(null)}),
+    modal?.type==='clearConfirm'&&h(ConfirmModal,{title:'Clear All Data?',
+      text:'This will remove all intentions, streaks, and history. Consider exporting first.',
+      confirmLabel:'Clear Everything',confirmClass:'danger',onConfirm:doClearAll,onCancel:()=>setModal(null)}),
+
+    showLevelUp&&h('div',{className:'levelup-overlay'},
+      h('div',{className:'levelup-card'},
+        h('div',{className:'levelup-icon'},showLevelUp.icon),
+        h('div',{className:'levelup-title'},'Level Up'),
+        h('div',{className:'levelup-name'},showLevelUp.name),
+        h('div',{className:'levelup-sub'},showLevelUp.desc))),
+
+    xpFloats.map(f=>h('span',{key:f.id,className:'xp-toast',
+      style:{top:'45%',left:'50%',transform:'translateX(-50%)'}},`+${f.amount} XP`)));
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(h(App));
+} catch(e) {
+  document.getElementById('app').innerHTML = '<div style="padding:20px;color:red;font-family:monospace;white-space:pre-wrap;word-break:break-all"><h2>JS Error</h2>'+e.message+'<br><br>'+e.stack+'</div>';
+  console.error(e);
+}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
